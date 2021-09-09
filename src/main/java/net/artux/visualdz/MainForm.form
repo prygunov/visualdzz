@@ -65,12 +65,13 @@
               </grid>
             </constraints>
             <properties>
+              <majorTickSpacing value="1"/>
               <maximum value="2"/>
-              <minorTickSpacing value="0"/>
+              <minorTickSpacing value="1"/>
               <name value=""/>
               <opaque value="true"/>
-              <paintLabels value="false"/>
-              <paintTicks value="false"/>
+              <paintLabels value="true"/>
+              <paintTicks value="true"/>
               <paintTrack value="true"/>
               <snapToTicks value="true"/>
               <valueIsAdjusting value="true"/>
