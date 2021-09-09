@@ -5,6 +5,6 @@ import java.io.File;
 
 public interface Utils {
 
-  public Image fileToImage(File file);
+  public ChannelImage fileToImage(File file);
 
 }
