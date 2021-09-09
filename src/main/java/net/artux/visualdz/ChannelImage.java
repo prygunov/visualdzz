@@ -58,12 +58,10 @@ public class ChannelImage {
     short max = Collections.max(Arrays.asList(bytesAsShort));
 
     short c = (short) (Short.MAX_VALUE / max);
-    System.out.println("C: " + c + " max: " + max);
 
     for(int i = 0; i < bytesAsShort.length; i++)
       targetPixels[i] = (short) (bytesAsShort[i] * c);
 
-    //System.arraycopy(bytesAsInt, 0, targetPixels, 0, bytesAsInt.length);
     return image;
   }
 }

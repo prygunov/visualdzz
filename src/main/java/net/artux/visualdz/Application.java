@@ -4,14 +4,13 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 
 public class Application implements ChangeListener {
 
@@ -20,22 +19,15 @@ public class Application implements ChangeListener {
     Dimension size;
     double scale = 1.0;
     private BufferedImage image;
-    private Utils utils;
 
-    ChannelImage rChannel;
-    ChannelImage gChannel;
-    ChannelImage bChannel;
+    ChannelImage channelImage;
 
     Application(){
         mainForm = new MainForm();
-        mainForm.getrButton().addActionListener(e -> rChannel = readChannel(chooseFile()));
-        mainForm.getgButton().addActionListener(e -> gChannel = readChannel(chooseFile()));
-        mainForm.getbButton().addActionListener(e -> {
-            bChannel = readChannel(chooseFile());
-            Channels channels = new Channels(rChannel, gChannel, bChannel);
-            setImage(channels.toImage());
+        mainForm.getChooseButton().addActionListener(e -> {
+            channelImage = readChannel(chooseFile());
+            setImage(channelImage.toImage());
         });
-
 
         JSlider slider = mainForm.getZoomSlider();
         slider.setMajorTickSpacing(50);
@@ -43,6 +35,17 @@ public class Application implements ChangeListener {
         slider.setPaintTicks(true);
         slider.setPaintLabels(true);
         slider.addChangeListener(this);
+        mainForm.getSwift().addChangeListener(this);
+        mainForm.getImageFrame().addMouseMotionListener(new MouseMotionListener() {
+            @Override
+            public void mouseDragged(MouseEvent e) {}
+
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                String s = "X: " + e.getX() + ", Y: " + e.getY() + ", color: " + channelImage.getPixel(e.getX(), e.getY());
+                System.out.println(s);
+            }
+        });;
     }
 
     int getSwift(){
@@ -53,20 +56,14 @@ public class Application implements ChangeListener {
     public void stateChanged(ChangeEvent e) {
         if (e.getSource() instanceof JSlider){
             JSlider slider = (JSlider) e.getSource();
-            switch (slider.getName()){
-                case "zoomSlider":
-                    int value = ((JSlider) e.getSource()).getValue();
-                    scale = value / 100.0;
-                    break;
-                case "swiftSlider":
-                    if (rChannel!=null)
-                        rChannel.setSwift(getSwift());
-                    if (gChannel!=null)
-                        gChannel.setSwift(getSwift());
-                    if (bChannel!=null)
-                        bChannel.setSwift(getSwift());
-
-                    break;
+            if (slider.getMaximum() == 2) {
+                if (channelImage != null) {
+                    channelImage.setSwift(getSwift());
+                    setImage(channelImage.toImage());
+                }
+            } else{
+                int value = ((JSlider) e.getSource()).getValue();
+                scale = value / 100.0;
             }
             paintImage();
 
@@ -113,21 +110,23 @@ public class Application implements ChangeListener {
             d = new DataInputStream(new FileInputStream(file));
 
             byte[] bytes = d.readAllBytes();
+            //прочли байты файла
 
-            Short[] bytesAsInt = new Short[bytes.length];
-            for (int i = 0; i < bytes.length; i++) {
-                bytesAsInt[i] = (short) Byte.toUnsignedInt(bytes[i]);
+            Short[] bytesAsShort = new Short[4];
+            for (int i = 0; i < 4; i++) {
+                bytesAsShort[i] = (short) Byte.toUnsignedInt(bytes[i]);
+                // переписываем в неотрицательный массив
             }
 
-            int width =  bytesAsInt[1] * 256 + bytesAsInt[0];
-            int height = bytesAsInt[3] * 256 + bytesAsInt[2];
+            int width =  bytesAsShort[0] + bytesAsShort[1] * 256;
+            int height = bytesAsShort[2] + bytesAsShort[3] * 256;
 
-            bytesAsInt = new Short[(bytes.length-4)/2];
-            for (int i = 0; i < (bytes.length-4)/2; i++) {
-                bytesAsInt[i] = (short) (Byte.toUnsignedInt(bytes[4 + 2 * i]) + 256 * Byte.toUnsignedInt(bytes[5 + 2 * i]));
+            bytesAsShort = new Short[(bytes.length-4)/2];
+            for (int i = 0; i < bytesAsShort.length; i++) {
+                bytesAsShort[i] = (short) (Byte.toUnsignedInt(bytes[4 + 2 * i]) + 256 * Byte.toUnsignedInt(bytes[5 + 2 * i]));
             }
 
-            ChannelImage channelImage = new ChannelImage(width, height, bytesAsInt);
+            ChannelImage channelImage = new ChannelImage(width, height, bytesAsShort);
             channelImage.setSwift(getSwift());
             return channelImage;
         } catch (Exception e) {

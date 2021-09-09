@@ -23,9 +23,6 @@ import java.util.Arrays;
 
 public class Main{
 
-  private static JFrame frame;
-  static private JTextArea lastClicked;
-
   public static void main(String[] args){
     Application application = new Application();
 

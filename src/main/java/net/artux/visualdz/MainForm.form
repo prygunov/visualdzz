@@ -9,7 +9,7 @@
     </properties>
     <border type="none"/>
     <children>
-      <grid id="eef7b" layout-manager="GridLayoutManager" row-count="15" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="eef7b" layout-manager="GridLayoutManager" row-count="9" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints border-constraint="West"/>
         <properties>
@@ -20,63 +20,17 @@
         </properties>
         <border type="bevel-lowered" title="Настройки"/>
         <children>
-          <component id="64cd9" class="javax.swing.JButton" binding="rButton" default-binding="true">
+          <component id="64cd9" class="javax.swing.JButton" binding="chooseButton">
             <constraints>
-              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="R"/>
+              <text value="Выбрать файл"/>
             </properties>
           </component>
-          <component id="72f7d" class="javax.swing.JButton" binding="gButton" default-binding="true">
+          <component id="29f87" class="javax.swing.JTextField" binding="xField">
             <constraints>
-              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="G"/>
-            </properties>
-          </component>
-          <component id="69be2" class="javax.swing.JButton" binding="bButton" default-binding="true">
-            <constraints>
-              <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="B"/>
-            </properties>
-          </component>
-          <component id="5364f" class="javax.swing.JCheckBox" binding="rCheckBox">
-            <constraints>
-              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false">
-                <preferred-size width="78" height="21"/>
-              </grid>
-            </constraints>
-            <properties>
-              <text value=""/>
-            </properties>
-          </component>
-          <component id="f9697" class="javax.swing.JCheckBox" binding="gCheckBox">
-            <constraints>
-              <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false">
-                <preferred-size width="78" height="21"/>
-              </grid>
-            </constraints>
-            <properties>
-              <text value=""/>
-            </properties>
-          </component>
-          <component id="eef15" class="javax.swing.JCheckBox" binding="bCheckBox">
-            <constraints>
-              <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false">
-                <preferred-size width="78" height="21"/>
-              </grid>
-            </constraints>
-            <properties>
-              <text value=""/>
-            </properties>
-          </component>
-          <component id="29f87" class="javax.swing.JTextField" binding="rField">
-            <constraints>
-              <grid row="7" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="1" indent="0" use-parent-layout="false">
+              <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="78" height="30"/>
               </grid>
             </constraints>
@@ -84,9 +38,9 @@
               <editable value="false"/>
             </properties>
           </component>
-          <component id="5dfb9" class="javax.swing.JTextField" binding="bField">
+          <component id="5dfb9" class="javax.swing.JTextField" binding="brightnessField">
             <constraints>
-              <grid row="9" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="1" indent="0" use-parent-layout="false">
+              <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="78" height="30"/>
               </grid>
             </constraints>
@@ -94,9 +48,9 @@
               <editable value="false"/>
             </properties>
           </component>
-          <component id="f6805" class="javax.swing.JTextField" binding="gField">
+          <component id="f6805" class="javax.swing.JTextField" binding="yField">
             <constraints>
-              <grid row="8" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="1" indent="0" use-parent-layout="false">
+              <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="78" height="30"/>
               </grid>
             </constraints>
@@ -104,9 +58,9 @@
               <editable value="false"/>
             </properties>
           </component>
-          <component id="d3b80" class="javax.swing.JSlider" binding="swift">
+          <component id="d3b80" class="javax.swing.JSlider" binding="swiftSlider">
             <constraints>
-              <grid row="10" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="3" indent="0" use-parent-layout="false">
+              <grid row="7" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="3" indent="0" use-parent-layout="false">
                 <preferred-size width="100" height="50"/>
               </grid>
             </constraints>
@@ -122,121 +76,41 @@
               <valueIsAdjusting value="true"/>
             </properties>
           </component>
-          <component id="eb2dd" class="javax.swing.JLabel">
-            <constraints>
-              <grid row="12" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="R:"/>
-            </properties>
-          </component>
-          <component id="f979a" class="javax.swing.JTextField" binding="rFactField">
-            <constraints>
-              <grid row="12" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                <preferred-size width="78" height="30"/>
-              </grid>
-            </constraints>
-            <properties>
-              <editable value="false"/>
-            </properties>
-          </component>
-          <component id="3b0a3" class="javax.swing.JTextField" binding="gFactField">
-            <constraints>
-              <grid row="13" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                <preferred-size width="78" height="30"/>
-              </grid>
-            </constraints>
-            <properties>
-              <editable value="false"/>
-            </properties>
-          </component>
           <component id="d786c" class="javax.swing.JLabel">
             <constraints>
-              <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="R:"/>
+              <text value="X:"/>
             </properties>
           </component>
           <component id="54f2a" class="javax.swing.JLabel">
             <constraints>
-              <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="G:"/>
+              <text value="Y:"/>
             </properties>
           </component>
           <component id="77412" class="javax.swing.JLabel">
             <constraints>
-              <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="B:"/>
-            </properties>
-          </component>
-          <component id="9133d" class="javax.swing.JLabel">
-            <constraints>
-              <grid row="11" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="Отображаемые значения"/>
-            </properties>
-          </component>
-          <component id="234e2" class="javax.swing.JLabel">
-            <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="Каналы"/>
-            </properties>
-          </component>
-          <component id="45143" class="javax.swing.JLabel">
-            <constraints>
-              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
-                <preferred-size width="78" height="16"/>
-              </grid>
-            </constraints>
-            <properties>
-              <text value="Отображение"/>
-            </properties>
-          </component>
-          <component id="c0299" class="javax.swing.JCheckBox" binding="grayCheckBox">
-            <constraints>
-              <grid row="4" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="Однотонное отображение "/>
-            </properties>
-          </component>
-          <component id="b303d" class="javax.swing.JLabel">
-            <constraints>
-              <grid row="13" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="G:"/>
+              <text value="Яркость:"/>
             </properties>
           </component>
           <component id="40d12" class="javax.swing.JLabel">
             <constraints>
-              <grid row="14" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="8" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="B:"/>
-            </properties>
-          </component>
-          <component id="53016" class="javax.swing.JTextField" binding="bFactField">
-            <constraints>
-              <grid row="14" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                <preferred-size width="78" height="30"/>
-              </grid>
-            </constraints>
-            <properties>
-              <editable value="false"/>
+              <text value="Разрешение файла:"/>
             </properties>
           </component>
           <component id="425ef" class="javax.swing.JLabel">
             <constraints>
-              <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <text value="Сдвиг"/>
@@ -244,18 +118,36 @@
           </component>
           <component id="14122" class="javax.swing.JLabel">
             <constraints>
-              <grid row="6" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="Реальные значения"/>
-            </properties>
-          </component>
-          <component id="fc9e2" class="javax.swing.JLabel" binding="cursorPosition">
-            <constraints>
-              <grid row="5" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="2" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <text value="Положение курсора"/>
+            </properties>
+          </component>
+          <component id="fc9e2" class="javax.swing.JLabel" binding="file">
+            <constraints>
+              <grid row="1" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="Загруженный файл:"/>
+            </properties>
+          </component>
+          <component id="eb2dd" class="javax.swing.JLabel">
+            <constraints>
+              <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="Отображаемая яркость:"/>
+            </properties>
+          </component>
+          <component id="f979a" class="javax.swing.JTextField" binding="factBrightnessField">
+            <constraints>
+              <grid row="6" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                <preferred-size width="78" height="30"/>
+              </grid>
+            </constraints>
+            <properties>
+              <editable value="false"/>
             </properties>
           </component>
         </children>

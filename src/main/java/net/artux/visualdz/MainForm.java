@@ -7,24 +7,16 @@ import java.awt.*;
 public class MainForm extends JFrame {
     private JPanel rootPanel;
     private JSlider zoomSlider;
-    private JButton rButton;
-    private JButton gButton;
-    private JButton bButton;
-    private JCheckBox rCheckBox;
-    private JCheckBox gCheckBox;
-    private JCheckBox bCheckBox;
-    private JTextField rField;
-    private JSlider swift;
-    private JTextField rFactField;
-    private JTextField gFactField;
-    private JTextField bFactField;
-    private JCheckBox grayCheckBox;
-    private JTextField bField;
-    private JTextField gField;
+    private JButton chooseButton;
+    private JTextField xField;
+    private JSlider swiftSlider;
+    private JTextField yField;
     private JLabel imageFrame;
-    private JLabel cursorPosition;
+    private JLabel file;
     private JPanel frame;
     private JScrollPane scrollPane;
+    private JTextField factBrightnessField;
+    private JTextField brightnessField;
 
     MainForm() {
         $$$setupUI$$$();
@@ -44,64 +36,44 @@ public class MainForm extends JFrame {
         return zoomSlider;
     }
 
-    public JButton getrButton() {
-        return rButton;
+    public JButton getChooseButton() {
+        return chooseButton;
     }
 
-    public JButton getgButton() {
-        return gButton;
-    }
-
-    public JButton getbButton() {
-        return bButton;
-    }
-
-    public JCheckBox getrCheckBox() {
-        return rCheckBox;
-    }
-
-    public JCheckBox getgCheckBox() {
-        return gCheckBox;
-    }
-
-    public JCheckBox getbCheckBox() {
-        return bCheckBox;
-    }
-
-    public JTextField getrField() {
-        return rField;
+    public JTextField getxField() {
+        return xField;
     }
 
     public JSlider getSwift() {
-        return swift;
+        return swiftSlider;
     }
 
-    public JTextField getrFactField() {
-        return rFactField;
-    }
-
-    public JTextField getgFactField() {
-        return gFactField;
-    }
-
-    public JTextField getbFactField() {
-        return bFactField;
-    }
-
-    public JCheckBox getGrayCheckBox() {
-        return grayCheckBox;
-    }
-
-    public JTextField getbField() {
-        return bField;
-    }
-
-    public JTextField getgField() {
-        return gField;
+    public JTextField getyField() {
+        return yField;
     }
 
     public JLabel getImageFrame() {
         return imageFrame;
+    }
+
+    public JLabel getFile() {
+        return file;
+    }
+
+    public JPanel getFrame() {
+        return frame;
+    }
+
+    public JScrollPane getScrollPane() {
+        return scrollPane;
+    }
+
+    public JTextField getFactBrightnessField() {
+        return factBrightnessField;
+    }
+
+    public JTextField getBrightnessField() {
+        return brightnessField;
     }
 
     /**
@@ -123,53 +95,29 @@ public class MainForm extends JFrame {
         panel1.setVisible(true);
         rootPanel.add(panel1, BorderLayout.WEST);
         panel1.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLoweredBevelBorder(), "Настройки", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
-        rButton = new JButton();
-        rButton.setText("R");
-        panel1.add(rButton, new com.intellij.uiDesigner.core.GridConstraints(1, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        gButton = new JButton();
-        gButton.setText("G");
-        panel1.add(gButton, new com.intellij.uiDesigner.core.GridConstraints(2, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        bButton = new JButton();
-        bButton.setText("B");
-        panel1.add(bButton, new com.intellij.uiDesigner.core.GridConstraints(3, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        rCheckBox = new JCheckBox();
-        rCheckBox.setText("");
-        panel1.add(rCheckBox, new com.intellij.uiDesigner.core.GridConstraints(1, 1, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(78, 21), null, 0, false));
-        gCheckBox = new JCheckBox();
-        gCheckBox.setText("");
-        panel1.add(gCheckBox, new com.intellij.uiDesigner.core.GridConstraints(2, 1, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(78, 21), null, 0, false));
-        bCheckBox = new JCheckBox();
-        bCheckBox.setText("");
-        panel1.add(bCheckBox, new com.intellij.uiDesigner.core.GridConstraints(3, 1, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(78, 21), null, 0, false));
-        rField = new JTextField();
-        rField.setEditable(false);
-        panel1.add(rField, new com.intellij.uiDesigner.core.GridConstraints(7, 1, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(78, 30), null, 0, false));
-        bField = new JTextField();
-        bField.setEditable(false);
-        panel1.add(bField, new com.intellij.uiDesigner.core.GridConstraints(9, 1, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(78, 30), null, 0, false));
-        gField = new JTextField();
-        gField.setEditable(false);
-        panel1.add(gField, new com.intellij.uiDesigner.core.GridConstraints(8, 1, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(78, 30), null, 0, false));
-        swift = new JSlider();
-        swift.setMaximum(2);
-        swift.setMinorTickSpacing(0);
-        swift.setName("");
-        swift.setOpaque(true);
-        swift.setPaintLabels(false);
-        swift.setPaintTicks(false);
-        swift.setPaintTrack(true);
-        swift.setSnapToTicks(true);
-        swift.setValueIsAdjusting(true);
-        panel1.add(swift, new com.intellij.uiDesigner.core.GridConstraints(10, 1, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_BOTH, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(100, 50), null, 0, false));
+        chooseButton = new JButton();
+        chooseButton.setText("R");
+        panel1.add(chooseButton, new com.intellij.uiDesigner.core.GridConstraints(1, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        xField = new JTextField();
+        xField.setEditable(false);
+        panel1.add(xField, new com.intellij.uiDesigner.core.GridConstraints(7, 1, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(78, 30), null, 0, false));
+        yField = new JTextField();
+        yField.setEditable(false);
+        panel1.add(yField, new com.intellij.uiDesigner.core.GridConstraints(8, 1, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(78, 30), null, 0, false));
+        swiftSlider = new JSlider();
+        swiftSlider.setMaximum(2);
+        swiftSlider.setMinorTickSpacing(0);
+        swiftSlider.setName("");
+        swiftSlider.setOpaque(true);
+        swiftSlider.setPaintLabels(false);
+        swiftSlider.setPaintTicks(false);
+        swiftSlider.setPaintTrack(true);
+        swiftSlider.setSnapToTicks(true);
+        swiftSlider.setValueIsAdjusting(true);
+        panel1.add(swiftSlider, new com.intellij.uiDesigner.core.GridConstraints(10, 1, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_BOTH, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(100, 50), null, 0, false));
         final JLabel label1 = new JLabel();
         label1.setText("R:");
         panel1.add(label1, new com.intellij.uiDesigner.core.GridConstraints(12, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        rFactField = new JTextField();
-        rFactField.setEditable(false);
-        panel1.add(rFactField, new com.intellij.uiDesigner.core.GridConstraints(12, 1, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(78, 30), null, 0, false));
-        gFactField = new JTextField();
-        gFactField.setEditable(false);
-        panel1.add(gFactField, new com.intellij.uiDesigner.core.GridConstraints(13, 1, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(78, 30), null, 0, false));
         final JLabel label2 = new JLabel();
         label2.setText("R:");
         panel1.add(label2, new com.intellij.uiDesigner.core.GridConstraints(7, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
@@ -188,27 +136,21 @@ public class MainForm extends JFrame {
         final JLabel label7 = new JLabel();
         label7.setText("Отображение");
         panel1.add(label7, new com.intellij.uiDesigner.core.GridConstraints(0, 1, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(78, 16), null, 0, false));
-        grayCheckBox = new JCheckBox();
-        grayCheckBox.setText("Однотонное отображение ");
-        panel1.add(grayCheckBox, new com.intellij.uiDesigner.core.GridConstraints(4, 0, 1, 2, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JLabel label8 = new JLabel();
         label8.setText("G:");
         panel1.add(label8, new com.intellij.uiDesigner.core.GridConstraints(13, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JLabel label9 = new JLabel();
         label9.setText("B:");
         panel1.add(label9, new com.intellij.uiDesigner.core.GridConstraints(14, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        bFactField = new JTextField();
-        bFactField.setEditable(false);
-        panel1.add(bFactField, new com.intellij.uiDesigner.core.GridConstraints(14, 1, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(78, 30), null, 0, false));
         final JLabel label10 = new JLabel();
         label10.setText("Сдвиг");
         panel1.add(label10, new com.intellij.uiDesigner.core.GridConstraints(10, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JLabel label11 = new JLabel();
         label11.setText("Реальные значения");
         panel1.add(label11, new com.intellij.uiDesigner.core.GridConstraints(6, 0, 1, 2, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        cursorPosition = new JLabel();
-        cursorPosition.setText("Положение курсора");
-        panel1.add(cursorPosition, new com.intellij.uiDesigner.core.GridConstraints(5, 0, 1, 2, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        file = new JLabel();
+        file.setText("Положение курсора");
+        panel1.add(file, new com.intellij.uiDesigner.core.GridConstraints(5, 0, 1, 2, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JPanel panel2 = new JPanel();
         panel2.setLayout(new BorderLayout(0, 0));
         rootPanel.add(panel2, BorderLayout.CENTER);
@@ -239,5 +181,4 @@ public class MainForm extends JFrame {
     public JComponent $$$getRootComponent$$$() {
         return rootPanel;
     }
-
 }
