@@ -11,6 +11,7 @@ import java.awt.image.BufferedImage;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.BitSet;
 
 public class Application implements ChangeListener {
 
@@ -42,8 +43,10 @@ public class Application implements ChangeListener {
 
             @Override
             public void mouseMoved(MouseEvent e) {
-                String s = "X: " + e.getX() + ", Y: " + e.getY() + ", color: " + channelImage.getPixel(e.getX(), e.getY());
-                System.out.println(s);
+                mainForm.getBrightnessField().setText(String.valueOf(channelImage.getPixel(e.getX(), e.getY())));
+                mainForm.getFactBrightnessField().setText(String.valueOf(channelImage.getRealPixel(e.getX(), e.getY())));
+                mainForm.getxField().setText(String.valueOf(e.getX()));
+                mainForm.getyField().setText(String.valueOf(e.getY()));
             }
         });;
     }
@@ -116,11 +119,13 @@ public class Application implements ChangeListener {
             int height = bytesAsShort[2] + bytesAsShort[3] * 256;
 
             bytesAsShort = new Short[(bytes.length-4)/2];
-            for (int i = 0; i < bytesAsShort.length; i++) {
-                bytesAsShort[i] = (short) (Byte.toUnsignedInt(bytes[4 + 2 * i]) + 256 * Byte.toUnsignedInt(bytes[5 + 2 * i]));
+            BitSet[] bitSets = new BitSet[(bytes.length-4)/2];
+            for (int i = 0; i < bitSets.length; i++) {
+                bitSets[i] = new BitSet(10);
+                bitSets[i] = Bits.convert((Byte.toUnsignedInt(bytes[4 + 2 * i]) + 256L * Byte.toUnsignedInt(bytes[5 + 2 * i])));
             }
 
-            ChannelImage channelImage = new ChannelImage(width, height, bytesAsShort);
+            ChannelImage channelImage = new ChannelImage(width, height, bitSets);
             channelImage.setSwift(getSwift());
             return channelImage;
         } catch (Exception e) {
@@ -128,6 +133,7 @@ public class Application implements ChangeListener {
             return null;
         }
     }
+
 
     public File chooseFile(){
         JFileChooser fileChooser = new JFileChooser();

@@ -17,6 +17,7 @@ public class MainForm extends JFrame {
     private JScrollPane scrollPane;
     private JTextField factBrightnessField;
     private JTextField brightnessField;
+    private JLabel Position;
 
     MainForm() {
         $$$setupUI$$$();
@@ -74,6 +75,10 @@ public class MainForm extends JFrame {
 
     public JTextField getBrightnessField() {
         return brightnessField;
+    }
+
+    public JLabel getPosition() {
+        return Position;
     }
 
     /**
