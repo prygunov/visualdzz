@@ -1,8 +1,7 @@
 package net.artux.visualdz;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferUShort;
+import java.awt.image.*;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -52,15 +51,16 @@ public class ChannelImage {
   }
 
   public BufferedImage toImage(){
-    BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_USHORT_GRAY);
-    short[] targetPixels = ((DataBufferUShort) image.getRaster().getDataBuffer()).getData();
+    BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+    int[] targetPixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
 
-    short max = Collections.max(Arrays.asList(bytesAsShort));
 
-    short c = (short) (Short.MAX_VALUE / max);
 
-    for(int i = 0; i < bytesAsShort.length; i++)
-      targetPixels[i] = (short) (bytesAsShort[i] * c);
+
+    for(int i = 0; i < bytesAsShort.length; i++) {
+      int brightness = bytesAsShort[i]/4;
+      targetPixels[i] = ((brightness&0x0ff)<<16)|((brightness&0x0ff)<<8)|(brightness&0x0ff);
+    }
 
     return image;
   }

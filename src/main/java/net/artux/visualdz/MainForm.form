@@ -186,6 +186,7 @@
           <component id="1f6c1" class="javax.swing.JSlider" binding="zoomSlider">
             <constraints border-constraint="South"/>
             <properties>
+              <enabled value="false"/>
               <maximum value="500"/>
               <minimum value="50"/>
             </properties>

@@ -84,24 +84,18 @@ public class Application implements ChangeListener {
         if (image!=null) {
             int imageWidth = image.getWidth();
             int imageHeight = image.getHeight();
-            BufferedImage bi = new BufferedImage(
+            BufferedImage scaledImage = new BufferedImage(
                     (int)(imageWidth*scale),
                     (int)(imageHeight*scale),
                     image.getType());
-            Graphics2D g2 = bi.createGraphics();
+            Graphics2D g2 = scaledImage.createGraphics();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                     RenderingHints.VALUE_ANTIALIAS_ON);
             AffineTransform at = AffineTransform.getTranslateInstance(0, 0);
             at.scale(scale, scale);
             g2.drawRenderedImage(image, at);
-            drawImage(bi);
+            drawImage(scaledImage);
         }
-    }
-
-    public Dimension getPreferredSize() {
-        int w = (int) (scale * size.width);
-        int h = (int) (scale * size.height);
-        return new Dimension(w, h);
     }
 
     public ChannelImage readChannel(File file){
