@@ -27,6 +27,7 @@ public class MainForm extends JFrame {
         setSize(900, 700);
         setLocation(200, 200);
         setVisible(true);
+        setTitle("POOVD 1");
 
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
