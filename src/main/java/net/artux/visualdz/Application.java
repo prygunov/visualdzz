@@ -4,6 +4,8 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.AffineTransform;
@@ -11,9 +13,17 @@ import java.awt.image.BufferedImage;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.BitSet;
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class Application implements ChangeListener {
+
+    List<File> files = new ArrayList<File>();
+    private static final String[] formats = {".mbv"};
 
     MainForm mainForm;
 
@@ -23,36 +33,62 @@ public class Application implements ChangeListener {
 
     ChannelImage channelImage;
 
+    ActionListener filesBoxListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            for (File file : files) {
+                if (file.getName().equals(mainForm.filesBox.getSelectedItem())) {
+                    channelImage = readChannel(file);
+                    setImage(channelImage);
+                    return;
+                }
+            }
+
+        }
+    };
+
+
     Application(){
         mainForm = new MainForm();
-        mainForm.getChooseButton().addActionListener(e -> {
-            channelImage = readChannel(chooseFile());
-            setImage(channelImage.toImage());
-        });
+        mainForm.chooseButton.addActionListener(e -> {
+            files = Arrays.stream(chooseFiles()).filter(new Predicate<File>() {
+                @Override
+                public boolean test(File file) {
+                    for (String format : formats) {
+                        if (file.getName().contains(format)) {
+                            mainForm.filesBox.addItem(file.getName());
 
-        JSlider slider = mainForm.getZoomSlider();
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+            }).collect(Collectors.toList());
+        });
+        mainForm.filesBox.addActionListener(filesBoxListener);
+        JSlider slider = mainForm.zoomSlider;
         slider.setMajorTickSpacing(50);
         slider.setMinorTickSpacing(25);
         slider.setPaintTicks(true);
         slider.setPaintLabels(true);
         slider.addChangeListener(this);
-        mainForm.getSwift().addChangeListener(this);
-        mainForm.getImageFrame().addMouseMotionListener(new MouseMotionListener() {
+        mainForm.swiftSlider.addChangeListener(this);
+        mainForm.imageFrame.addMouseMotionListener(new MouseMotionListener() {
             @Override
             public void mouseDragged(MouseEvent e) {}
 
             @Override
             public void mouseMoved(MouseEvent e) {
-                mainForm.getBrightnessField().setText(String.valueOf(channelImage.getPixel(e.getX(), e.getY())));
-                mainForm.getFactBrightnessField().setText(String.valueOf(channelImage.getRealPixel(e.getX(), e.getY())));
-                mainForm.getxField().setText(String.valueOf(e.getX()));
-                mainForm.getyField().setText(String.valueOf(e.getY()));
+                mainForm.brightnessField.setText(String.valueOf(channelImage.getPixel(e.getX(), e.getY())));
+                mainForm.factBrightnessField.setText(String.valueOf(channelImage.getVisiblePixel(e.getX(), e.getY())));
+                mainForm.xField.setText(String.valueOf(e.getX()));
+                mainForm.yField.setText(String.valueOf(e.getY()));
             }
         });;
     }
 
     int getSwift(){
-        return mainForm.getSwift().getValue();
+        return mainForm.swiftSlider.getValue();
     }
 
     @Override
@@ -62,7 +98,7 @@ public class Application implements ChangeListener {
             if (slider.getMaximum() == 2) {
                 if (channelImage != null) {
                     channelImage.setSwift(getSwift());
-                    setImage(channelImage.toImage());
+                    setImage(channelImage);
                 }
             } else{
                 int value = ((JSlider) e.getSource()).getValue();
@@ -74,13 +110,15 @@ public class Application implements ChangeListener {
 
     }
 
-    public void setImage(BufferedImage image) {
-        this.image = image;
+    public void setImage(ChannelImage channelImage) {
+        mainForm.fileNameLabel.setText(channelImage.getName());
+        mainForm.sizeLabel.setText(channelImage.getWidth() + "X" + channelImage.getHeight());
+        this.image = channelImage.toImage();
         paintImage();
     }
 
     public void drawImage(BufferedImage image) {
-        mainForm.getImageFrame().setIcon(new ImageIcon(image));
+        mainForm.imageFrame.setIcon(new ImageIcon(image));
     }
 
     protected void paintImage() {
@@ -125,7 +163,7 @@ public class Application implements ChangeListener {
                 bitSets[i] = Bits.convert((Byte.toUnsignedInt(bytes[4 + 2 * i]) + 256L * Byte.toUnsignedInt(bytes[5 + 2 * i])));
             }
 
-            ChannelImage channelImage = new ChannelImage(width, height, bitSets);
+            ChannelImage channelImage = new ChannelImage(file.getName(), width, height, bitSets);
             channelImage.setSwift(getSwift());
             return channelImage;
         } catch (Exception e) {
@@ -135,12 +173,14 @@ public class Application implements ChangeListener {
     }
 
 
-    public File chooseFile(){
+    public File[] chooseFiles(){
         JFileChooser fileChooser = new JFileChooser();
 
+        fileChooser.setMultiSelectionEnabled(true);
         int option = fileChooser.showOpenDialog(mainForm);
+
         if(option == JFileChooser.APPROVE_OPTION)
-            return fileChooser.getSelectedFile();
+           return fileChooser.getSelectedFiles();
         else return null;
     }
 
