@@ -18,7 +18,7 @@ public class MainForm extends JFrame {
     public JTextField factBrightnessField;
     public JTextField brightnessField;
     public JLabel Position;
-    public JComboBox filesBox;
+    public JComboBox<String> filesBox;
     public JLabel fileNameLabel;
     public JLabel sizeLabel;
 
@@ -27,6 +27,7 @@ public class MainForm extends JFrame {
         setSize(900, 700);
         setLocation(200, 200);
         setVisible(true);
+
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }

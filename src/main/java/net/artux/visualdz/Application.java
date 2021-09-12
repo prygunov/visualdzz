@@ -17,21 +17,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.List;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class Application implements ChangeListener {
 
-    List<File> files = new ArrayList<File>();
+
     private static final String[] formats = {".mbv"};
 
-    MainForm mainForm;
+    private MainForm mainForm;
 
-    Dimension size;
-    double scale = 1.0;
-    private BufferedImage image;
-
-    ChannelImage channelImage;
+    private List<File> files = new ArrayList<>();
+    private double scale = 1.0;
+    private BufferedImage visibleImage;
+    private ChannelImage channelImage;
 
     ActionListener filesBoxListener = new ActionListener() {
         @Override
@@ -39,7 +37,7 @@ public class Application implements ChangeListener {
             for (File file : files) {
                 if (file.getName().equals(mainForm.filesBox.getSelectedItem())) {
                     channelImage = readChannel(file);
-                    setImage(channelImage);
+                    setVisibleImage(channelImage);
                     return;
                 }
             }
@@ -51,18 +49,15 @@ public class Application implements ChangeListener {
     Application(){
         mainForm = new MainForm();
         mainForm.chooseButton.addActionListener(e -> {
-            files = Arrays.stream(chooseFiles()).filter(new Predicate<File>() {
-                @Override
-                public boolean test(File file) {
-                    for (String format : formats) {
-                        if (file.getName().contains(format)) {
-                            mainForm.filesBox.addItem(file.getName());
+            files = Arrays.stream(chooseFiles()).filter(file -> {
+                for (String format : formats) {
+                    if (file.getName().contains(format)) {
+                        mainForm.filesBox.addItem(file.getName());
 
-                            return true;
-                        }
+                        return true;
                     }
-                    return false;
                 }
+                return false;
             }).collect(Collectors.toList());
         });
         mainForm.filesBox.addActionListener(filesBoxListener);
@@ -79,12 +74,14 @@ public class Application implements ChangeListener {
 
             @Override
             public void mouseMoved(MouseEvent e) {
-                mainForm.brightnessField.setText(String.valueOf(channelImage.getPixel(e.getX(), e.getY())));
-                mainForm.factBrightnessField.setText(String.valueOf(channelImage.getVisiblePixel(e.getX(), e.getY())));
-                mainForm.xField.setText(String.valueOf(e.getX()));
-                mainForm.yField.setText(String.valueOf(e.getY()));
+                int x = (int) (e.getX() / scale);
+                int y = (int) (e.getY() / scale);
+                mainForm.xField.setText(String.valueOf(x));
+                mainForm.yField.setText(String.valueOf(y));
+                mainForm.brightnessField.setText(String.valueOf(channelImage.getPixel(x, y)));
+                mainForm.factBrightnessField.setText(String.valueOf(channelImage.getVisiblePixel(x, y)));
             }
-        });;
+        });
     }
 
     int getSwift(){
@@ -98,7 +95,7 @@ public class Application implements ChangeListener {
             if (slider.getMaximum() == 2) {
                 if (channelImage != null) {
                     channelImage.setSwift(getSwift());
-                    setImage(channelImage);
+                    setVisibleImage(channelImage);
                 }
             } else{
                 int value = ((JSlider) e.getSource()).getValue();
@@ -110,10 +107,10 @@ public class Application implements ChangeListener {
 
     }
 
-    public void setImage(ChannelImage channelImage) {
+    public void setVisibleImage(ChannelImage channelImage) {
         mainForm.fileNameLabel.setText(channelImage.getName());
         mainForm.sizeLabel.setText(channelImage.getWidth() + "X" + channelImage.getHeight());
-        this.image = channelImage.toImage();
+        this.visibleImage = channelImage.toImage();
         paintImage();
     }
 
@@ -122,25 +119,25 @@ public class Application implements ChangeListener {
     }
 
     protected void paintImage() {
-        if (image!=null) {
-            int imageWidth = image.getWidth();
-            int imageHeight = image.getHeight();
+        if (visibleImage !=null) {
+            int imageWidth = visibleImage.getWidth();
+            int imageHeight = visibleImage.getHeight();
             BufferedImage scaledImage = new BufferedImage(
                     (int)(imageWidth*scale),
                     (int)(imageHeight*scale),
-                    image.getType());
+                    visibleImage.getType());
             Graphics2D g2 = scaledImage.createGraphics();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                     RenderingHints.VALUE_ANTIALIAS_ON);
             AffineTransform at = AffineTransform.getTranslateInstance(0, 0);
             at.scale(scale, scale);
-            g2.drawRenderedImage(image, at);
+            g2.drawRenderedImage(visibleImage, at);
             drawImage(scaledImage);
         }
     }
 
     public ChannelImage readChannel(File file){
-        DataInputStream d = null;
+        DataInputStream d;
         try {
             d = new DataInputStream(new FileInputStream(file));
 
@@ -156,7 +153,6 @@ public class Application implements ChangeListener {
             int width =  bytesAsShort[0] + bytesAsShort[1] * 256;
             int height = bytesAsShort[2] + bytesAsShort[3] * 256;
 
-            bytesAsShort = new Short[(bytes.length-4)/2];
             BitSet[] bitSets = new BitSet[(bytes.length-4)/2];
             for (int i = 0; i < bitSets.length; i++) {
                 bitSets[i] = new BitSet(10);
@@ -167,7 +163,7 @@ public class Application implements ChangeListener {
             channelImage.setSwift(getSwift());
             return channelImage;
         } catch (Exception e) {
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(mainForm, e.getMessage());
             return null;
         }
     }
@@ -181,7 +177,7 @@ public class Application implements ChangeListener {
 
         if(option == JFileChooser.APPROVE_OPTION)
            return fileChooser.getSelectedFiles();
-        else return null;
+        else return new File[0];
     }
 
 }

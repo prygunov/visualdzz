@@ -1,10 +1,8 @@
 package net.artux.visualdz;
 
-import java.awt.*;
-import java.awt.image.*;
-import java.util.Arrays;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
 import java.util.BitSet;
-import java.util.Collections;
 
 public class ChannelImage {
 
@@ -13,7 +11,6 @@ public class ChannelImage {
   private int height;
   private int swift;
   private BitSet[] rawBytesAsShort;
-  private Short[] bytesAsShort;
 
   public ChannelImage(String name, int width, int height, BitSet[] rawBytesAsShort) {
     this.name = name;
@@ -37,16 +34,6 @@ public class ChannelImage {
 
   public void setSwift(int swift){
     this.swift = swift;
-    bytesAsShort = new Short[rawBytesAsShort.length];
-
-    /*for (int i = 0; i < bytesAsShort.length; i++) {
-      if (swift == 0 && rawBytesAsShort[i]>256)
-        bytesAsShort[i] = (short) (rawBytesAsShort[i] / 4);
-      else if (swift == 1 && rawBytesAsShort[i]>256)
-        bytesAsShort[i] = (short) (rawBytesAsShort[i] / 2);
-      else
-        bytesAsShort[i] = rawBytesAsShort[i];
-    }*/
   }
 
   public long getVisiblePixel(int x, int y){
@@ -55,10 +42,6 @@ public class ChannelImage {
 
   public long getPixel(int x, int y){
     return Bits.convert(rawBytesAsShort[x + y*width].get(0, 10));
-  }
-
-  public Short[] getBytesAsShort() {
-    return bytesAsShort;
   }
 
   public BufferedImage toImage(){
