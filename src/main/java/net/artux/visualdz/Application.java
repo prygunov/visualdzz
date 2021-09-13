@@ -49,16 +49,26 @@ public class Application implements ChangeListener {
     Application(){
         mainForm = new MainForm();
         mainForm.chooseButton.addActionListener(e -> {
-            files = Arrays.stream(chooseFiles()).filter(file -> {
+            List<File> tempFiles = Arrays.stream(chooseFiles()).filter(file -> {
                 for (String format : formats) {
                     if (file.getName().contains(format)) {
+                        for (File oldFile : files)
+                            if (file.getName().equals(oldFile.getName()))
+                                return false;
+                            //проверяем есть ли в массиве файл с именем загружаемого файла
                         mainForm.filesBox.addItem(file.getName());
-
+                        if (mainForm.filesBox.getItemCount() == 1) {
+                            channelImage = readChannel(file);
+                            setVisibleImage(channelImage);
+                        }
+                        //проверяем наличие других изображений и при отсутствии выводим первое загруженное изображение
                         return true;
                     }
                 }
                 return false;
             }).collect(Collectors.toList());
+            files.addAll(tempFiles);
+            //добавляем в наш массив файлов файлы, которые только что считали
         });
         mainForm.filesBox.addActionListener(filesBoxListener);
         JSlider slider = mainForm.zoomSlider;
