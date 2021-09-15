@@ -7,7 +7,7 @@ public class MainForm extends JFrame {
     public JSlider zoomSlider;
     public JButton chooseButton;
     public JTextField xField;
-    public JSlider swiftSlider;
+    public JSlider offsetSlider;
     public JTextField yField;
     public JLabel imageFrame;
     public JPanel frame;

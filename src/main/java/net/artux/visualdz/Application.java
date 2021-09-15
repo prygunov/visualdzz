@@ -3,12 +3,10 @@ package net.artux.visualdz;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -18,19 +16,17 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-public class Application implements ChangeListener {
-
+public class Application {
 
     private static final String[] formats = {".mbv"};
 
-    private MainForm mainForm;
+    private final MainForm mainForm;
 
     private List<Image> images = new ArrayList<>();
-    private double scale = 1.0;
     private BufferedImage visibleImage;
     private Image chosenImage;
 
-    ActionListener filesBoxListener = new ActionListener() {
+    ActionListener filesBoxChangedListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
             for (Image image : images) {
@@ -43,11 +39,11 @@ public class Application implements ChangeListener {
         }
     };
 
-    ActionListener showButtonListener = new ActionListener() {
+    ActionListener showButtonClickListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
             try {
-                chosenImage.readWithBeginRow((Integer) mainForm.beginRowField.getValue(), mainForm.swiftSlider.getValue());
+                chosenImage.readWithBeginRow((Integer) mainForm.beginRowField.getValue(), mainForm.offsetSlider.getValue());
                 setImage(chosenImage);
             } catch (IOException ioException) {
                 ioException.printStackTrace();
@@ -55,10 +51,9 @@ public class Application implements ChangeListener {
         }
     };
 
-
-    Application(){
-        mainForm = new MainForm();
-        mainForm.chooseButton.addActionListener(e -> {
+    ActionListener chooseButtonClickListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
             Arrays
                     .stream(chooseFiles())
                     .filter(new Predicate<File>() {
@@ -77,61 +72,49 @@ public class Application implements ChangeListener {
                             return false;
                         }
                     }).forEach(new Consumer<File>() {
-                        @Override
-                        public void accept(File file) {
-                            mainForm.filesBox.addItem(file.getName());
-                            images.add(new Image(file));
-                        }
-                    });
+                @Override
+                public void accept(File file) {
+                    mainForm.filesBox.addItem(file.getName());
+                    images.add(new Image(file));
+                }
+            });
+        }
+    };
 
-            //добавляем в наш массив файлов файлы, которые только что считали
-        });
-        mainForm.showButton.addActionListener(showButtonListener);
-        mainForm.filesBox.addActionListener(filesBoxListener);
+    ChangeListener offsetChangeListener = new ChangeListener() {
+        @Override
+        public void stateChanged(ChangeEvent e) {
+            if (chosenImage.getChannel() != null) {
+                chosenImage.getChannel().setSwift(mainForm.offsetSlider.getValue());
+                setImage(chosenImage);
+            }
+        }
+    };
 
-        JSlider slider = mainForm.zoomSlider;
-        slider.setMajorTickSpacing(50);
-        slider.setMinorTickSpacing(25);
-        slider.setPaintTicks(true);
-        slider.setPaintLabels(true);
-        slider.addChangeListener(this);
-        mainForm.swiftSlider.addChangeListener(this);
+
+    Application(){
+        mainForm = new MainForm();
+
+        mainForm.chooseButton.addActionListener(chooseButtonClickListener);
+        mainForm.showButton.addActionListener(showButtonClickListener);
+        mainForm.filesBox.addActionListener(filesBoxChangedListener);
+        mainForm.offsetSlider.addChangeListener(offsetChangeListener);
+
         mainForm.imageFrame.addMouseMotionListener(new MouseMotionListener() {
             @Override
             public void mouseDragged(MouseEvent e) {}
 
             @Override
             public void mouseMoved(MouseEvent e) {
-                int x = (int) (e.getX() / scale);
-                int y = (int) (e.getY() / scale);
+                int x = e.getX();
+                int y = e.getY();
+                // позиция курсора
                 mainForm.xField.setText(String.valueOf(x));
                 mainForm.yField.setText(String.valueOf(y));
                 mainForm.brightnessField.setText(String.valueOf(chosenImage.getChannel().getPixel(x, y)));
                 mainForm.factBrightnessField.setText(String.valueOf(chosenImage.getChannel().getVisiblePixel(x, y)));
             }
         });
-    }
-
-    int getSwift(){
-        return mainForm.swiftSlider.getValue();
-    }
-
-    @Override
-    public void stateChanged(ChangeEvent e) {
-        if (e.getSource() instanceof JSlider){
-            JSlider slider = (JSlider) e.getSource();
-            if (slider.getMaximum() == 2) {
-                if (chosenImage.getChannel() != null) {
-                    chosenImage.getChannel().setSwift(getSwift());
-                    setImage(chosenImage);
-                }
-            } else{
-                int value = ((JSlider) e.getSource()).getValue();
-                scale = value / 100.0;
-                renderImage();
-            }
-        }
-
     }
 
     public void setImage(Image image) {
@@ -144,21 +127,10 @@ public class Application implements ChangeListener {
     }
 
     protected void renderImage() {
-        if (visibleImage !=null) {
-            int imageWidth = visibleImage.getWidth();
-            int imageHeight = visibleImage.getHeight();
-            BufferedImage scaledImage = new BufferedImage(
-                    (int)(imageWidth*scale),
-                    (int)(imageHeight*scale),
-                    visibleImage.getType());
-            Graphics2D g2 = scaledImage.createGraphics();
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                    RenderingHints.VALUE_ANTIALIAS_ON);
-            AffineTransform at = AffineTransform.getTranslateInstance(0, 0);
-            at.scale(scale, scale);
-            g2.drawRenderedImage(visibleImage, at);
-            mainForm.imageFrame.setIcon(new ImageIcon(scaledImage));
-        }
+        if (visibleImage !=null)
+            mainForm.imageFrame.setIcon(new ImageIcon(visibleImage));
+        else
+            mainForm.imageFrame.setIcon(null);
     }
 
     public File[] chooseFiles(){
