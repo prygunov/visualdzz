@@ -12,7 +12,7 @@ public class Bits {
         bits.set(index);
       }
       ++index;
-      value = value >>> 1;
+      value = value >> 1;
     }
     return bits;
   }

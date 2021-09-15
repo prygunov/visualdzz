@@ -12,9 +12,9 @@ public class ChannelImage {
   private int height;
   private int swift;
   private int beginRow;
-  private final BitSet[] rawBytesAsShort;
+  private final short[] rawBytesAsShort;
 
-  public ChannelImage(int width, int height, int beginRow, BitSet[] rawBytesAsShort) {
+  public ChannelImage(int width, int height, int beginRow, short[] rawBytesAsShort) {
     this.beginRow = beginRow;
     this.width = width;
     this.height = height;
@@ -35,7 +35,7 @@ public class ChannelImage {
   }
 
   public long getVisiblePixel(int i){
-    return Bits.convert(rawBytesAsShort[i].get(swift, 8+swift));
+    return rawBytesAsShort[i]>>swift;
   }
 
   public long getVisiblePixel(int x, int y){
@@ -43,7 +43,7 @@ public class ChannelImage {
   }
 
   public long getPixel(int x, int y){
-    return Bits.convert(rawBytesAsShort[x + y*width].get(0, 10));
+    return rawBytesAsShort[x + y*width];
   }
 
   public BufferedImage toImage(){
@@ -51,7 +51,7 @@ public class ChannelImage {
     int[] targetPixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
 
     for(int i = 0; i < rawBytesAsShort.length; i++) {
-      int brightness = (int)getVisiblePixel(i);
+      int brightness = rawBytesAsShort[i]>>swift;
       targetPixels[i] = ((brightness&0x0ff)<<16)|((brightness&0x0ff)<<8)|(brightness&0x0ff);
     }
 

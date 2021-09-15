@@ -52,12 +52,12 @@ public class Image {
 
     byte[] bytes = d.readAllBytes();
 
-    BitSet[] bitSets = new BitSet[bytes.length/2];
-    for (int i = 0; i < bitSets.length; i++) {
-      bitSets[i] = new BitSet(10);
-      bitSets[i] = Bits.convert((Byte.toUnsignedInt(bytes[2 * i]) + 256 * Byte.toUnsignedInt(bytes[2 * i + 1])));
+    short[] shorts = new short[bytes.length/2];
+    for (int i = 0; i < shorts.length; i++) {
+      short pixel = (short) (Byte.toUnsignedInt(bytes[2 * i]) + 256 * Byte.toUnsignedInt(bytes[2 * i + 1]));
+      shorts[i] = pixel;
     }
-    ChannelImage channelImage = new ChannelImage(width, renderedHeight, beginRow, bitSets);
+    ChannelImage channelImage = new ChannelImage(width, renderedHeight, beginRow, shorts);
     channelImage.setSwift(swift);
     this.channel = channelImage;
     d.close();

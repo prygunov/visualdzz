@@ -17,7 +17,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 public class Application implements ChangeListener {
 
@@ -30,14 +29,13 @@ public class Application implements ChangeListener {
     private double scale = 1.0;
     private BufferedImage visibleImage;
     private Image chosenImage;
-    private ChannelImage channelImage;
 
     ActionListener filesBoxListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
             for (Image image : images) {
                 if (image.getFile().getName().equals(mainForm.filesBox.getSelectedItem())) {
-                    setVisibleImage(image);
+                    setImage(image);
                     return;
                 }
             }
@@ -50,7 +48,7 @@ public class Application implements ChangeListener {
         public void actionPerformed(ActionEvent e) {
             try {
                 chosenImage.readWithBeginRow((Integer) mainForm.beginRowField.getValue(), mainForm.swiftSlider.getValue());
-                setVisibleImage(chosenImage);
+                setImage(chosenImage);
             } catch (IOException ioException) {
                 ioException.printStackTrace();
             }
@@ -90,6 +88,7 @@ public class Application implements ChangeListener {
         });
         mainForm.showButton.addActionListener(showButtonListener);
         mainForm.filesBox.addActionListener(filesBoxListener);
+
         JSlider slider = mainForm.zoomSlider;
         slider.setMajorTickSpacing(50);
         slider.setMinorTickSpacing(25);
@@ -107,8 +106,8 @@ public class Application implements ChangeListener {
                 int y = (int) (e.getY() / scale);
                 mainForm.xField.setText(String.valueOf(x));
                 mainForm.yField.setText(String.valueOf(y));
-                mainForm.brightnessField.setText(String.valueOf(channelImage.getPixel(x, y)));
-                mainForm.factBrightnessField.setText(String.valueOf(channelImage.getVisiblePixel(x, y)));
+                mainForm.brightnessField.setText(String.valueOf(chosenImage.getChannel().getPixel(x, y)));
+                mainForm.factBrightnessField.setText(String.valueOf(chosenImage.getChannel().getVisiblePixel(x, y)));
             }
         });
     }
@@ -122,39 +121,29 @@ public class Application implements ChangeListener {
         if (e.getSource() instanceof JSlider){
             JSlider slider = (JSlider) e.getSource();
             if (slider.getMaximum() == 2) {
-                if (channelImage != null) {
-                    channelImage.setSwift(getSwift());
-                    renderImage(channelImage);
+                if (chosenImage.getChannel() != null) {
+                    chosenImage.getChannel().setSwift(getSwift());
+                    setImage(chosenImage);
                 }
             } else{
                 int value = ((JSlider) e.getSource()).getValue();
                 scale = value / 100.0;
+                renderImage();
             }
-            paintImage();
-
         }
 
     }
 
-    public void setVisibleImage(Image image) {
+    public void setImage(Image image) {
         chosenImage = image;
         mainForm.sizeLabel.setText(image.getWidth() + "X" + image.getHeight());
-        renderImage(image.getChannel());
-    }
-
-    public void renderImage(ChannelImage channelImage){
-        if (channelImage!=null) {
-            this.channelImage = channelImage;
-            this.visibleImage = channelImage.toImage();
-            paintImage();
+        if (image.getChannel()!=null) {
+            this.visibleImage = image.getChannel().toImage();
+            renderImage();
         }
     }
 
-    public void drawImage(BufferedImage image) {
-        mainForm.imageFrame.setIcon(new ImageIcon(image));
-    }
-
-    protected void paintImage() {
+    protected void renderImage() {
         if (visibleImage !=null) {
             int imageWidth = visibleImage.getWidth();
             int imageHeight = visibleImage.getHeight();
@@ -168,7 +157,7 @@ public class Application implements ChangeListener {
             AffineTransform at = AffineTransform.getTranslateInstance(0, 0);
             at.scale(scale, scale);
             g2.drawRenderedImage(visibleImage, at);
-            drawImage(scaledImage);
+            mainForm.imageFrame.setIcon(new ImageIcon(scaledImage));
         }
     }
 
