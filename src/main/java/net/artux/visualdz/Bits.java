@@ -4,11 +4,11 @@ import java.util.BitSet;
 
 public class Bits {
 
-  public static BitSet convert(long value) {
+  public static BitSet convert(int value) {
     BitSet bits = new BitSet();
     int index = 0;
     while (value != 0L) {
-      if (value % 2L != 0) {
+      if (value % 2 != 0) {
         bits.set(index);
       }
       ++index;
@@ -17,10 +17,10 @@ public class Bits {
     return bits;
   }
 
-  public static long convert(BitSet bits) {
-    long value = 0L;
+  public static int convert(BitSet bits) {
+    int value = 0;
     for (int i = 0; i < bits.length(); ++i) {
-      value += bits.get(i) ? (1L << i) : 0L;
+      value += bits.get(i) ? (1 << i) : 0;
     }
     return value;
   }

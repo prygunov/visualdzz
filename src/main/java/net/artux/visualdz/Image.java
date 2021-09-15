@@ -1,6 +1,5 @@
 package net.artux.visualdz;
 
-import java.awt.image.BufferedImage;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -45,24 +44,22 @@ public class Image {
   public void readWithBeginRow(int beginRow, int swift) throws IOException {
     DataInputStream d;
 
-      d = new DataInputStream(new FileInputStream(file));
+    d = new DataInputStream(new FileInputStream(file));
+    int skippedBytes = beginRow * width * 2;
 
-      int skippedBytes = beginRow * width * 2;
+    d.skipBytes(skippedBytes + 4);
+    int renderedHeight= height - beginRow;
 
-      d.skipBytes(skippedBytes + 4);
-      int renderedHeight= height - beginRow;
+    byte[] bytes = d.readAllBytes();
 
-      byte[] bytes = d.readAllBytes();
-
-      BitSet[] bitSets = new BitSet[bytes.length/2];
-      for (int i = 0; i < bitSets.length; i++) {
-        bitSets[i] = new BitSet(10);
-        bitSets[i] = Bits.convert((Byte.toUnsignedInt(bytes[2 * i]) + 256L * Byte.toUnsignedInt(bytes[2 * i + 1])));
-      }
-
-      ChannelImage channelImage = new ChannelImage(width, renderedHeight, beginRow, bitSets);
-      channelImage.setSwift(swift);
-      this.channel = channelImage;
+    BitSet[] bitSets = new BitSet[bytes.length/2];
+    for (int i = 0; i < bitSets.length; i++) {
+      bitSets[i] = new BitSet(10);
+      bitSets[i] = Bits.convert((Byte.toUnsignedInt(bytes[2 * i]) + 256 * Byte.toUnsignedInt(bytes[2 * i + 1])));
+    }
+    ChannelImage channelImage = new ChannelImage(width, renderedHeight, beginRow, bitSets);
+    channelImage.setSwift(swift);
+    this.channel = channelImage;
     d.close();
   }
 
