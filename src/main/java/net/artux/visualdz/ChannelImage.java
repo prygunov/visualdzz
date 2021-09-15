@@ -2,15 +2,13 @@ package net.artux.visualdz;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
-import java.io.File;
-import java.util.BitSet;
 
 public class ChannelImage {
 
 
   private int width;
   private int height;
-  private int swift;
+  private int offset;
   private int beginRow;
   private final short[] rawBytesAsShort;
 
@@ -19,7 +17,7 @@ public class ChannelImage {
     this.width = width;
     this.height = height;
     this.rawBytesAsShort = rawBytesAsShort;
-    setSwift(0);
+    setOffset(0);
   }
 
   public int getWidth() {
@@ -34,12 +32,12 @@ public class ChannelImage {
     return beginRow;
   }
 
-  public void setSwift(int swift){
-    this.swift = swift;
+  public void setOffset(int offset){
+    this.offset = offset;
   }
 
   public long getVisiblePixel(int i){
-    return rawBytesAsShort[i]>>swift;
+    return rawBytesAsShort[i]>> offset;
   }
 
   public long getVisiblePixel(int x, int y){
@@ -55,7 +53,7 @@ public class ChannelImage {
     int[] targetPixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
 
     for(int i = 0; i < rawBytesAsShort.length; i++) {
-      int brightness = rawBytesAsShort[i]>>swift;
+      int brightness = rawBytesAsShort[i]>> offset;
       targetPixels[i] = (brightness<<16)|(brightness<<8)|(brightness);
     }
 

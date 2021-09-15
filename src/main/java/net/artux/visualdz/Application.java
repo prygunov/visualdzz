@@ -4,7 +4,6 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -90,7 +89,7 @@ public class Application {
         @Override
         public void stateChanged(ChangeEvent e) {
             if (chosenImage.getChannel() != null) {
-                chosenImage.getChannel().setSwift(mainForm.offsetSlider.getValue());
+                chosenImage.getChannel().setOffset(mainForm.offsetSlider.getValue());
                 setImage(chosenImage);
             }
         }

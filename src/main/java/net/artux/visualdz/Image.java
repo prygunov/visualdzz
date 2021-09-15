@@ -57,7 +57,7 @@ public class Image {
       shorts[i] = pixel;
     }
     ChannelImage channelImage = new ChannelImage(width, renderedHeight, beginRow, shorts);
-    channelImage.setSwift(swift);
+    channelImage.setOffset(swift);
     this.channel = channelImage;
     d.close();
   }
