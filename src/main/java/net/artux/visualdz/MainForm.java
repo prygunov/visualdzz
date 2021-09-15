@@ -24,7 +24,7 @@ public class MainForm extends JFrame {
         setContentPane(rootPanel);
         setSize(900, 700);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
-        setLocation(200, 200);
+        setLocation(200, 800);
         setVisible(true);
         setTitle("POOVD 1");
 

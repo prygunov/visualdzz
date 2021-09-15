@@ -1,80 +1,66 @@
 package net.artux.visualdz;
 
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
 
 public class Image {
 
-  private File file;
+
   private int width;
   private int height;
-  private ChannelImage channel;
+  private int offset;
+  private int beginRow;
+  private final short[] brightnessArray;
 
-  public Image(File file) {
-    this.file = file;
-    try {
-      defineSize();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+  public Image(int width, int height, int beginRow, short[] brightnessArray) {
+    this.beginRow = beginRow;
+    this.width = width;
+    this.height = height;
+    this.brightnessArray = brightnessArray;
+    setOffset(0);
   }
 
-  void defineSize() throws IOException {
-    DataInputStream d;
-
-    d = new DataInputStream(new FileInputStream(file));
-
-    byte[] bytes = d.readNBytes(4);
-    //прочли байты файла
-
-    Short[] bytesAsShort = new Short[4];
-    for (int i = 0; i < 4; i++) {
-      bytesAsShort[i] = (short) Byte.toUnsignedInt(bytes[i]);
-      // переписываем в неотрицательный массив
-    }
-
-    width =  bytesAsShort[0] + bytesAsShort[1] * 256;
-    height = bytesAsShort[2] + bytesAsShort[3] * 256;
-    d.close();
-  }
-
-  public void readWithBeginRow(int beginRow, int swift) throws IOException {
-    DataInputStream d;
-
-    d = new DataInputStream(new FileInputStream(file));
-    int skippedBytes = beginRow * width * 2;
-
-    d.skipBytes(skippedBytes + 4);
-    int renderedHeight= height - beginRow;
-
-    byte[] bytes = d.readAllBytes();
-
-    short[] shorts = new short[bytes.length/2];
-    for (int i = 0; i < shorts.length; i++) {
-      short pixel = (short) (Byte.toUnsignedInt(bytes[2 * i]) + 256 * Byte.toUnsignedInt(bytes[2 * i + 1]));
-      shorts[i] = pixel;
-    }
-    ChannelImage channelImage = new ChannelImage(width, renderedHeight, beginRow, shorts);
-    channelImage.setOffset(swift);
-    this.channel = channelImage;
-    d.close();
-  }
-
-  public ChannelImage getChannel() {
-    return channel;
-  }
-
-  public File getFile() {
-    return file;
+  public int getWidth() {
+    return width;
   }
 
   public int getHeight() {
     return height;
   }
 
-  public int getWidth() {
-    return width;
+  public int getBeginRow() {
+    return beginRow;
+  }
+
+  public void setOffset(int offset){
+    this.offset = offset;
+  }
+
+  public int getOffset() {
+    return offset;
+  }
+
+  public int getVisibleBrightness(int i){
+    return brightnessArray[i] >> offset;
+  }
+
+  public int getVisibleBrightness(int x, int y){
+    return getVisibleBrightness(x + y*width);
+  }
+
+  public int getBrightness(int x, int y){
+    return brightnessArray[x + y*width];
+  }
+
+  public BufferedImage toImage(){
+    BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_BGR);
+    int[] targetPixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
+
+    for(int i = 0; i < brightnessArray.length; i++) {
+      int brightness = getVisibleBrightness(i);
+      targetPixels[i] = (brightness<<16)|(brightness<<8)|(brightness);
+    }
+
+    return image;
   }
 }
