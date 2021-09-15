@@ -114,7 +114,9 @@ public class Application {
                 int y = e.getY();
                 // позиция курсора
                 mainForm.xField.setText(String.valueOf(x));
-                mainForm.yField.setText(String.valueOf(y));
+                mainForm.yField.setText(String.valueOf(y + chosenImage.getChannel().getBeginRow()));
+                mainForm.factXField.setText(String.valueOf(x));
+                mainForm.factYField.setText(String.valueOf(y));
                 mainForm.brightnessField.setText(String.valueOf(chosenImage.getChannel().getPixel(x, y)));
                 mainForm.factBrightnessField.setText(String.valueOf(chosenImage.getChannel().getVisiblePixel(x, y)));
             }

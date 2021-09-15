@@ -20,10 +20,13 @@ public class MainForm extends JFrame {
     public JLabel sizeLabel;
     public JButton showButton;
     public JSpinner beginRowField;
+    public JTextField factXField;
+    public JTextField factYField;
 
     MainForm() {
         setContentPane(rootPanel);
         setSize(900, 700);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         setLocation(200, 200);
         setVisible(true);
         setTitle("POOVD 1");
