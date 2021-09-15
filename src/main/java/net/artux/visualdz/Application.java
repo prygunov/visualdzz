@@ -43,11 +43,14 @@ public class Application {
     ActionListener showButtonClickListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            try {
+            if((Integer)mainForm.beginRowField.getValue() < chosenImage.getHeight()) try {
                 chosenImage.readWithBeginRow((Integer) mainForm.beginRowField.getValue(), mainForm.offsetSlider.getValue());
                 setImage(chosenImage);
             } catch (IOException ioException) {
                 ioException.printStackTrace();
+            }
+            else{
+                mainForm.beginRowField.setValue(Integer.valueOf(0));
             }
         }
     };
@@ -66,7 +69,6 @@ public class Application {
                                         if (file.getName().equals(oldImage.getFile().getName()))
                                             return false;
                                     //проверяем есть ли в массиве файл с именем загружаемого файла
-
                                     return true;
                                 }
                             }
@@ -77,6 +79,7 @@ public class Application {
                 public void accept(File file) {
                     mainForm.filesBox.addItem(file.getName());
                     images.add(new Image(file));
+                    if(images.size() == 1 )setImage(images.get(0));
                 }
             });
         }
