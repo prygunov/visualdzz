@@ -4,13 +4,12 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.BitSet;
 
 public class Image {
 
   private File file;
-  int width;
-  int height;
+  private int width;
+  private int height;
   private ChannelImage channel;
 
   public Image(File file) {

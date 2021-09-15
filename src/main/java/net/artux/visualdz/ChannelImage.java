@@ -30,6 +30,10 @@ public class ChannelImage {
     return height;
   }
 
+  public int getBeginRow() {
+    return beginRow;
+  }
+
   public void setSwift(int swift){
     this.swift = swift;
   }
@@ -52,7 +56,7 @@ public class ChannelImage {
 
     for(int i = 0; i < rawBytesAsShort.length; i++) {
       int brightness = rawBytesAsShort[i]>>swift;
-      targetPixels[i] = ((brightness&0x0ff)<<16)|((brightness&0x0ff)<<8)|(brightness&0x0ff);
+      targetPixels[i] = (brightness<<16)|(brightness<<8)|(brightness);
     }
 
     return image;

@@ -3,6 +3,8 @@ package net.artux.visualdz;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -18,12 +20,11 @@ import java.util.function.Predicate;
 
 public class Application {
 
-    private static final String[] formats = {".mbv"};
+    private static final String[] formats = {"mbv"};
 
     private final MainForm mainForm;
 
-    private List<Image> images = new ArrayList<>();
-    private BufferedImage visibleImage;
+    private final List<Image> images = new ArrayList<>();
     private Image chosenImage;
 
     ActionListener filesBoxChangedListener = new ActionListener() {
@@ -120,13 +121,18 @@ public class Application {
     public void setImage(Image image) {
         chosenImage = image;
         mainForm.sizeLabel.setText(image.getWidth() + "X" + image.getHeight());
+
         if (image.getChannel()!=null) {
-            this.visibleImage = image.getChannel().toImage();
-            renderImage();
+            mainForm.beginRowField.setValue(image.getChannel().getBeginRow());
+            renderImage(image.getChannel().toImage());
+        } else {
+            mainForm.beginRowField.setValue(0);
+            renderImage(null);
         }
+
     }
 
-    protected void renderImage() {
+    protected void renderImage(BufferedImage visibleImage) {
         if (visibleImage !=null)
             mainForm.imageFrame.setIcon(new ImageIcon(visibleImage));
         else
@@ -137,6 +143,9 @@ public class Application {
         JFileChooser fileChooser = new JFileChooser();
 
         fileChooser.setMultiSelectionEnabled(true);
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("MBV файлы", formats);
+        fileChooser.setFileFilter(filter);
+
         int option = fileChooser.showOpenDialog(mainForm);
 
         if(option == JFileChooser.APPROVE_OPTION)
