@@ -4,7 +4,6 @@ import javax.swing.*;
 
 public class MainForm extends JFrame {
     public JPanel rootPanel;
-    public JSlider zoomSlider;
     public JButton chooseButton;
     public JTextField xField;
     public JSlider offsetSlider;
@@ -16,11 +15,9 @@ public class MainForm extends JFrame {
     public JTextField brightnessField;
     public JLabel Position;
     public JComboBox<String> filesBox;
-    public JLabel fileNameLabel;
     public JLabel sizeLabel;
     public JButton showButton;
     public JSpinner beginRowField;
-    public JTextField factXField;
     public JTextField factYField;
 
     MainForm() {

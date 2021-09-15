@@ -43,8 +43,9 @@ public class Application {
     ActionListener showButtonClickListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            if((Integer)mainForm.beginRowField.getValue() < chosenImage.getHeight()) try {
-                chosenImage.readWithBeginRow((Integer) mainForm.beginRowField.getValue(), mainForm.offsetSlider.getValue());
+            int row = (Integer)mainForm.beginRowField.getValue();
+            if(chosenImage != null && row >= 0 && row < chosenImage.getHeight()) try {
+                chosenImage.readWithBeginRow(row, mainForm.offsetSlider.getValue());
                 setImage(chosenImage);
             } catch (IOException ioException) {
                 ioException.printStackTrace();
@@ -115,7 +116,6 @@ public class Application {
                 // позиция курсора
                 mainForm.xField.setText(String.valueOf(x));
                 mainForm.yField.setText(String.valueOf(y + chosenImage.getChannel().getBeginRow()));
-                mainForm.factXField.setText(String.valueOf(x));
                 mainForm.factYField.setText(String.valueOf(y));
                 mainForm.brightnessField.setText(String.valueOf(chosenImage.getChannel().getPixel(x, y)));
                 mainForm.factBrightnessField.setText(String.valueOf(chosenImage.getChannel().getVisiblePixel(x, y)));
