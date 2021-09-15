@@ -10,13 +10,13 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.BitSet;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class Application implements ChangeListener {
@@ -26,18 +26,18 @@ public class Application implements ChangeListener {
 
     private MainForm mainForm;
 
-    private List<File> files = new ArrayList<>();
+    private List<Image> images = new ArrayList<>();
     private double scale = 1.0;
     private BufferedImage visibleImage;
+    private Image chosenImage;
     private ChannelImage channelImage;
 
     ActionListener filesBoxListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            for (File file : files) {
-                if (file.getName().equals(mainForm.filesBox.getSelectedItem())) {
-                    channelImage = readChannel(file);
-                    setVisibleImage(channelImage);
+            for (Image image : images) {
+                if (image.getFile().getName().equals(mainForm.filesBox.getSelectedItem())) {
+                    setVisibleImage(image);
                     return;
                 }
             }
@@ -45,31 +45,50 @@ public class Application implements ChangeListener {
         }
     };
 
+    ActionListener showButtonListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            try {
+                chosenImage.readWithBeginRow((Integer) mainForm.beginRowField.getValue(), mainForm.swiftSlider.getValue());
+                setVisibleImage(chosenImage);
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+        }
+    };
+
 
     Application(){
         mainForm = new MainForm();
         mainForm.chooseButton.addActionListener(e -> {
-            List<File> tempFiles = Arrays.stream(chooseFiles()).filter(file -> {
-                for (String format : formats) {
-                    if (file.getName().contains(format)) {
-                        for (File oldFile : files)
-                            if (file.getName().equals(oldFile.getName()))
-                                return false;
-                            //проверяем есть ли в массиве файл с именем загружаемого файла
-                        mainForm.filesBox.addItem(file.getName());
-                        if (mainForm.filesBox.getItemCount() == 1) {
-                            channelImage = readChannel(file);
-                            setVisibleImage(channelImage);
+            Arrays
+                    .stream(chooseFiles())
+                    .filter(new Predicate<File>() {
+                        @Override
+                        public boolean test(File file) {
+                            for (String format : formats) {
+                                if (file.getName().contains(format)) {
+                                    for (Image oldImage : images)
+                                        if (file.getName().equals(oldImage.getFile().getName()))
+                                            return false;
+                                    //проверяем есть ли в массиве файл с именем загружаемого файла
+
+                                    return true;
+                                }
+                            }
+                            return false;
                         }
-                        //проверяем наличие других изображений и при отсутствии выводим первое загруженное изображение
-                        return true;
-                    }
-                }
-                return false;
-            }).collect(Collectors.toList());
-            files.addAll(tempFiles);
+                    }).forEach(new Consumer<File>() {
+                        @Override
+                        public void accept(File file) {
+                            mainForm.filesBox.addItem(file.getName());
+                            images.add(new Image(file));
+                        }
+                    });
+
             //добавляем в наш массив файлов файлы, которые только что считали
         });
+        mainForm.showButton.addActionListener(showButtonListener);
         mainForm.filesBox.addActionListener(filesBoxListener);
         JSlider slider = mainForm.zoomSlider;
         slider.setMajorTickSpacing(50);
@@ -105,7 +124,7 @@ public class Application implements ChangeListener {
             if (slider.getMaximum() == 2) {
                 if (channelImage != null) {
                     channelImage.setSwift(getSwift());
-                    setVisibleImage(channelImage);
+                    renderImage(channelImage);
                 }
             } else{
                 int value = ((JSlider) e.getSource()).getValue();
@@ -117,11 +136,18 @@ public class Application implements ChangeListener {
 
     }
 
-    public void setVisibleImage(ChannelImage channelImage) {
-        mainForm.fileNameLabel.setText(channelImage.getName());
-        mainForm.sizeLabel.setText(channelImage.getWidth() + "X" + channelImage.getHeight());
-        this.visibleImage = channelImage.toImage();
-        paintImage();
+    public void setVisibleImage(Image image) {
+        chosenImage = image;
+        mainForm.sizeLabel.setText(image.getWidth() + "X" + image.getHeight());
+        renderImage(image.getChannel());
+    }
+
+    public void renderImage(ChannelImage channelImage){
+        if (channelImage!=null) {
+            this.channelImage = channelImage;
+            this.visibleImage = channelImage.toImage();
+            paintImage();
+        }
     }
 
     public void drawImage(BufferedImage image) {
@@ -145,39 +171,6 @@ public class Application implements ChangeListener {
             drawImage(scaledImage);
         }
     }
-
-    public ChannelImage readChannel(File file){
-        DataInputStream d;
-        try {
-            d = new DataInputStream(new FileInputStream(file));
-
-            byte[] bytes = d.readAllBytes();
-            //прочли байты файла
-
-            Short[] bytesAsShort = new Short[4];
-            for (int i = 0; i < 4; i++) {
-                bytesAsShort[i] = (short) Byte.toUnsignedInt(bytes[i]);
-                // переписываем в неотрицательный массив
-            }
-
-            int width =  bytesAsShort[0] + bytesAsShort[1] * 256;
-            int height = bytesAsShort[2] + bytesAsShort[3] * 256;
-
-            BitSet[] bitSets = new BitSet[(bytes.length-4)/2];
-            for (int i = 0; i < bitSets.length; i++) {
-                bitSets[i] = new BitSet(10);
-                bitSets[i] = Bits.convert((Byte.toUnsignedInt(bytes[4 + 2 * i]) + 256L * Byte.toUnsignedInt(bytes[5 + 2 * i])));
-            }
-
-            ChannelImage channelImage = new ChannelImage(file.getName(), width, height, bitSets);
-            channelImage.setSwift(getSwift());
-            return channelImage;
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(mainForm, e.getMessage());
-            return null;
-        }
-    }
-
 
     public File[] chooseFiles(){
         JFileChooser fileChooser = new JFileChooser();

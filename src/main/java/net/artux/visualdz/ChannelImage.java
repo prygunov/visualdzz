@@ -2,26 +2,24 @@ package net.artux.visualdz;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
+import java.io.File;
 import java.util.BitSet;
 
 public class ChannelImage {
 
-  private String name;
+
   private int width;
   private int height;
   private int swift;
+  private int beginRow;
   private final BitSet[] rawBytesAsShort;
 
-  public ChannelImage(String name, int width, int height, BitSet[] rawBytesAsShort) {
-    this.name = name;
+  public ChannelImage(int width, int height, int beginRow, BitSet[] rawBytesAsShort) {
+    this.beginRow = beginRow;
     this.width = width;
     this.height = height;
     this.rawBytesAsShort = rawBytesAsShort;
     setSwift(0);
-  }
-
-  public String getName() {
-    return name;
   }
 
   public int getWidth() {

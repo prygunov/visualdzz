@@ -10,7 +10,6 @@ public class MainForm extends JFrame {
     public JSlider swiftSlider;
     public JTextField yField;
     public JLabel imageFrame;
-    public JLabel file;
     public JPanel frame;
     public JScrollPane scrollPane;
     public JTextField factBrightnessField;
@@ -19,6 +18,8 @@ public class MainForm extends JFrame {
     public JComboBox<String> filesBox;
     public JLabel fileNameLabel;
     public JLabel sizeLabel;
+    public JButton showButton;
+    public JSpinner beginRowField;
 
     MainForm() {
         setContentPane(rootPanel);
