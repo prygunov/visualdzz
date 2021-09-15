@@ -1,8 +1,6 @@
 package net.artux.visualdz;
 
 import javax.swing.*;
-import javax.swing.border.TitledBorder;
-import java.awt.*;
 
 public class MainForm extends JFrame {
     public JPanel rootPanel;
