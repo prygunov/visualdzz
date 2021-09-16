@@ -20,7 +20,7 @@ public class ImageFile {
     DataInputStream dataInputStream = new DataInputStream(new FileInputStream(file));
 
     byte[] bytes = dataInputStream.readNBytes(4);
-    //прочли байты файла
+    //прочли байты с размером изображения
 
     Short[] bytesAsShort = new Short[4];
     for (int i = 0; i < 4; i++) {
@@ -28,6 +28,7 @@ public class ImageFile {
       // переписываем в неотрицательный массив
     }
 
+    //задаем размер
     width =  bytesAsShort[0] + bytesAsShort[1] * 256;
     height = bytesAsShort[2] + bytesAsShort[3] * 256;
 
@@ -36,19 +37,24 @@ public class ImageFile {
 
   public void readWithBeginRow(int beginRow, int swift) throws Exception {
     DataInputStream dataInputStream = new DataInputStream(new FileInputStream(file));
+    // пропускаем байты пропущенных строк
     int skippedBytes = beginRow * width * 2;
     dataInputStream.skipBytes(skippedBytes + 4);
 
+    // вычисляем новую высоту
     int renderedHeight= height - beginRow;
 
+    // читаем байты до конца
     byte[] bytes = dataInputStream.readAllBytes();
 
-    short[] shorts = new short[bytes.length/2];
-    for (int i = 0; i < shorts.length; i++) {
-      shorts[i] = (short) (Byte.toUnsignedInt(bytes[2 * i]) + 256 * Byte.toUnsignedInt(bytes[2 * i + 1]));
+    // создаем и заполняем массив яркостей
+    short[] brightnessPixels = new short[bytes.length/2];
+    for (int i = 0; i < brightnessPixels.length; i++) {
+      brightnessPixels[i] = (short) (Byte.toUnsignedInt(bytes[2 * i]) + 256 * Byte.toUnsignedInt(bytes[2 * i + 1]));
     }
 
-    image = new Image(width, renderedHeight, beginRow, shorts);
+    // создаем структуру изображения
+    image = new Image(width, renderedHeight, beginRow, brightnessPixels);
     image.setOffset(swift);
 
     dataInputStream.close();

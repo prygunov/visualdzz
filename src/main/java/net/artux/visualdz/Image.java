@@ -43,7 +43,8 @@ public class Image {
   }
   //Получения значения яркости выбранного пикселя с учетом сдвига
   public int getVisibleBrightness(int i){
-    return brightnessArray[i] >> offset;
+    // побитовое и с числом 255 для представляения в одном байте
+    return (brightnessArray[i] >> offset) & 0xff;
   }
 
   public int getVisibleBrightness(int x, int y){
@@ -56,12 +57,12 @@ public class Image {
 
   public BufferedImage toBufferedImage(){
     BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_BGR);
-    //достаём ссылку на массив пикселей изображения и заполняем с помощью массива яркостей
+    // достаём ссылку на массив пикселей изображения
     int[] targetPixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
 
+    // заполняем с помощью массива яркостей
     for(int i = 0; i < brightnessArray.length; i++) {
       int brightness = getVisibleBrightness(i);
-      //
       targetPixels[i] = (brightness<<16)|(brightness<<8)|(brightness);
     }
 
