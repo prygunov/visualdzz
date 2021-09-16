@@ -63,6 +63,8 @@ public class Image {
     // заполняем с помощью массива яркостей
     for(int i = 0; i < brightnessArray.length; i++) {
       int brightness = getVisibleBrightness(i);
+      // в одном int(4 байта) можно представить 3 байта цвета
+      // реализуется с помощью побитового сдвига
       targetPixels[i] = (brightness<<16)|(brightness<<8)|(brightness);
     }
 
