@@ -29,11 +29,12 @@ public class Application {
     ActionListener filesBoxChangedListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-
-            // находим совпадение имен из списка выбранных файлов и
+            // находим совпадение имен из списка выбранных файлов
+            // и выбранного элемента из выпадающего списка
             for (ImageFile imageFile : imageFiles) {
                 if (imageFile.getFile().getName().equals(mainForm.filesBox.getSelectedItem())) {
                     setImage(imageFile);
+                    //устанавливаем изображение как выбранное
                     return;
                 }
             }
@@ -45,16 +46,23 @@ public class Application {
     ActionListener showButtonClickListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
+            // при нажатии отобразить проверяем есть ли выбранное изображение
             if(chosenImageFile != null) {
                 int row = (Integer) mainForm.beginRowField.getValue();
+                //проверка начальной строки на подходящее значение
                 if (row >= 0 && row < chosenImageFile.getHeight()) {
                     try {
                         chosenImageFile.readWithBeginRow(row, mainForm.offsetSlider.getValue());
-                        setImage(chosenImageFile);
+                        // чтение из памяти изображения в озу, с учетом начальной строки
+                        // рисуем изображение
+                        renderImage(chosenImageFile.getImage().toBufferedImage());
                     } catch (Exception exception) {
+                        // в случае ошибки говорим об этом диалоговым окном
                         JOptionPane.showMessageDialog(mainForm, "Ошибка, не удалось прочесть файл: " + exception.getMessage());
                     }
                 } else {
+                    // в случае неверного значения начальной строки,
+                    // говорим об этом всплывающим окном и устанавливаем 0 по умолчанию
                     JOptionPane.showMessageDialog(mainForm, "Начальная строка должна быть не менее 0 и не более " + (chosenImageFile.getHeight() - 1));
                     mainForm.beginRowField.setValue(0);
                 }
@@ -72,21 +80,24 @@ public class Application {
                         @Override
                         public boolean test(File file) {
                             for (String format : supportedFormats) {
+                                //проверяем совпадает ли формат файла с поддерживаемыми
                                 if (file.getName().contains(format)) {
                                     for (ImageFile oldImageFile : imageFiles)
                                         if (file.getName().equals(oldImageFile.getFile().getName()))
-                                            return false;
-                                    //проверяем есть ли в массиве файл с именем загружаемого файла
-                                    return true;
+                                            return false; // если подобный файл уже был загружен, исключаем из списка
+
+                                    return true; // если файл еще не был загружен, оставляем в списке
                                 }
                             }
-                            return false;
+                            return false;// неподдерживаемый формат
                         }
                     }).forEach(new Consumer<File>() {
                 @Override
                 public void accept(File file) {
                     try {
+                        // добавляем к списку выбранных файл-изображение
                         imageFiles.add(new ImageFile(file));
+                        // добавляем имя файла в выпадающий список
                         mainForm.filesBox.addItem(file.getName());
                         if(imageFiles.size() == 1) {
                             mainForm.showButton.setEnabled(true);
@@ -107,7 +118,7 @@ public class Application {
             if (chosenImageFile.getImage() != null) {
                 //если изображение присутствует в озу меняем сдвиг и показываем на экран
                 chosenImageFile.getImage().setOffset(mainForm.offsetSlider.getValue());
-                renderImage(chosenImageFile.getImage().toImage());
+                renderImage(chosenImageFile.getImage().toBufferedImage());
             }
         }
     };
@@ -153,12 +164,11 @@ public class Application {
             //если изображение присутствует в озу показываем его на экран и устанавливаем его значения
             mainForm.beginRowField.setValue(imageFile.getImage().getBeginRow());
             mainForm.offsetSlider.setValue(imageFile.getImage().getOffset());
-            renderImage(imageFile.getImage().toImage());
+            renderImage(imageFile.getImage().toBufferedImage());
         } else {
             mainForm.beginRowField.setValue(0);
             renderImage(null);
         }
-
     }
 
     protected void renderImage(BufferedImage visibleImage) {
@@ -170,16 +180,17 @@ public class Application {
     }
 
     public File[] chooseFiles(){
+        // окно выбора файлов
         JFileChooser fileChooser = new JFileChooser();
 
-        fileChooser.setMultiSelectionEnabled(true);
+        fileChooser.setMultiSelectionEnabled(true);// разрешаем выбор нескольких
         FileNameExtensionFilter filter = new FileNameExtensionFilter("MBV файлы", supportedFormats);
-        fileChooser.setFileFilter(filter);
+        fileChooser.setFileFilter(filter);// устанавливаем фильтр на формат файлов
 
         int option = fileChooser.showOpenDialog(mainForm);
 
         if(option == JFileChooser.APPROVE_OPTION)
-           return fileChooser.getSelectedFiles();
+           return fileChooser.getSelectedFiles(); // если была нажата кнопка "Open" возвращаем файлы
         else return new File[0];
     }
 

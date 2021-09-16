@@ -53,9 +53,8 @@ public class Image {
   public int getBrightness(int x, int y){
     return brightnessArray[x + y*width];
   }
-  //
-  public BufferedImage toImage(){
-    //Создаём объект класса BufferdImage и передаём ему в конструктор значения высоты, ширины и тип изображения
+
+  public BufferedImage toBufferedImage(){
     BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_BGR);
     //достаём ссылку на массив пикселей изображения и заполняем с помощью массива яркостей
     int[] targetPixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
