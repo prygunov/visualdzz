@@ -46,6 +46,34 @@ public class Image {
         return offset;
     }
 
+    public Image bilinearInterpolation(int mult){
+        short[] increasedBrightnessArray = new short[brightnessArray.length * mult * mult ];
+        for(int i = 0;i<increasedBrightnessArray.length;i++)
+        {
+            increasedBrightnessArray[i] = 0;
+        }
+        for(int i = 0;i<height;i++)
+        {
+            int skipY = (i*2+1)*mult/2* width* mult;
+            for(int j = 0;j<width;j++) {
+                int skipX = j * mult + mult/2;
+                increasedBrightnessArray[skipX + skipY] = brightnessArray[j+i*width];
+            }
+        }
+
+        for(int i = mult/2;i<height*mult-mult;i++)
+        {
+            int i1 = increasedBrightnessArray[i],i2 = increasedBrightnessArray[i + mult],i3 = increasedBrightnessArray[i+width*mult],i4 = increasedBrightnessArray[i+width*mult+mult];
+            int d = i1,a = i2 - d,b = i3 - d,c = i4 - a - b - d;
+            for(int j = mult/2;j<width*mult-mult;j++) {
+                //тут если что нихера не доделано
+                int x = a *j + b * i +c * j * i -d;
+            }
+        }
+        Image increasedImage = new Image(width*mult,height*mult,0,increasedBrightnessArray);
+        return increasedImage;
+    }
+
     //Получения значения яркости выбранного пикселя с учетом сдвига
     public int getVisibleBrightness(int i) {
         // побитовое и с числом 255 для представляения в одном байте
