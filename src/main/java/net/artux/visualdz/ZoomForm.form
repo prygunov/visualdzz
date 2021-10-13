@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="net.artux.visualdz.ZoomForm">
+  <grid id="27dc6" binding="rootPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
+    <constraints>
+      <xy x="20" y="20" width="500" height="400"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <grid id="c2658" layout-manager="BorderLayout" hgap="0" vgap="0">
+        <constraints border-constraint="North"/>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="abd83" class="javax.swing.JCheckBox" binding="interpolationCheckBox">
+            <constraints border-constraint="South"/>
+            <properties>
+              <text value="Интерполировать"/>
+            </properties>
+          </component>
+          <component id="79280" class="javax.swing.JCheckBox" binding="brightCheckBox">
+            <constraints border-constraint="Center"/>
+            <properties>
+              <text value="Нормировать яркость"/>
+            </properties>
+          </component>
+        </children>
+      </grid>
+      <grid id="e1f24" layout-manager="BorderLayout" hgap="0" vgap="0">
+        <constraints border-constraint="Center"/>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="17ce3" class="javax.swing.JLabel" binding="zoomField">
+            <constraints border-constraint="Center"/>
+            <properties>
+              <text value=""/>
+            </properties>
+          </component>
+        </children>
+      </grid>
+    </children>
+  </grid>
+</form>

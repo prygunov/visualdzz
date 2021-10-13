@@ -4,10 +4,7 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
@@ -21,6 +18,7 @@ public class Application {
     private static final String[] supportedFormats = {"mbv"};
 
     private final MainForm mainForm; // структура окна
+    private final ZoomForm zoomForm;
 
     private final List<ImageFile> imageFiles = new ArrayList<>(); // список выбранных файлов-изображений
     private ImageFile chosenImageFile; // последний выбранный файл-изображения
@@ -55,7 +53,7 @@ public class Application {
                         chosenImageFile.readWithBeginRow(row, mainForm.offsetSlider.getValue());
                         // чтение из памяти изображения в озу, с учетом начальной строки
                         // рисуем изображение
-                        renderImage(chosenImageFile.getImage().toBufferedImage());
+                        renderImage(mainForm.imageFrame, chosenImageFile.getImage().toBufferedImage());
                     } catch (Exception exception) {
                         // в случае ошибки говорим об этом диалоговым окном
                         JOptionPane.showMessageDialog(mainForm, "Ошибка, не удалось прочесть файл: " + exception.getMessage());
@@ -118,14 +116,15 @@ public class Application {
             if (chosenImageFile.getImage() != null) {
                 //если изображение присутствует в озу меняем сдвиг и показываем на экран
                 chosenImageFile.getImage().setOffset(mainForm.offsetSlider.getValue());
-                renderImage(chosenImageFile.getImage().toBufferedImage());
+                renderImage(mainForm.imageFrame, chosenImageFile.getImage().toBufferedImage());
             }
         }
     };
 
 
     Application(){
-        mainForm = new MainForm(); // создание окна с элементами
+        mainForm = new MainForm();
+        zoomForm = new ZoomForm(); // создание окна с элементами
 
         // назначение обработчиков событий
         mainForm.chooseButton.addActionListener(chooseButtonClickListener);
@@ -152,6 +151,33 @@ public class Application {
                 mainForm.factBrightnessField.setText(String.valueOf(chosenImageFile.getImage().getVisibleBrightness(x, y)));
             }
         });
+        mainForm.imageFrame.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                zoomForm.setVisible(true);
+                renderImage(zoomForm.zoomField, chosenImageFile.getImage().getPart(e.getX(), e.getY()).toBufferedImage());
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+        });
     }
 
     public void setImage(ImageFile imageFile) {
@@ -164,19 +190,19 @@ public class Application {
             //если изображение присутствует в озу показываем его на экран и устанавливаем его значения
             mainForm.beginRowField.setValue(imageFile.getImage().getBeginRow());
             mainForm.offsetSlider.setValue(imageFile.getImage().getOffset());
-            renderImage(imageFile.getImage().toBufferedImage());
+            renderImage(mainForm.imageFrame, imageFile.getImage().toBufferedImage());
         } else {
             mainForm.beginRowField.setValue(0);
-            renderImage(null);
+            renderImage(mainForm.imageFrame, null);
         }
     }
 
-    protected void renderImage(BufferedImage visibleImage) {
+    protected void renderImage(JLabel frame, BufferedImage visibleImage) {
         //отрисовка изображения
         if (visibleImage !=null)
-            mainForm.imageFrame.setIcon(new ImageIcon(visibleImage));
+            frame.setIcon(new ImageIcon(visibleImage));
         else
-            mainForm.imageFrame.setIcon(null);
+            frame.setIcon(null);
     }
 
     public File[] chooseFiles(){

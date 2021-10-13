@@ -26,7 +26,7 @@ public class MainForm extends JFrame {
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setLocation(200, 800);
         setVisible(true);
-        setTitle("POOVD 1");
+        setTitle("POOVD");
 
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
