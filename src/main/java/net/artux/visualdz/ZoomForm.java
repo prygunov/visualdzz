@@ -11,7 +11,7 @@ public class ZoomForm extends JFrame{
     ZoomForm(){
         setContentPane(rootPanel);
         setSize(150, 200);
-        setLocation(1100, 800);
+        setLocation(300, 300);
         setTitle("Лупа");
     }
 }

@@ -66,39 +66,36 @@ public class Image {
     public Image getPart(int x, int y) {
         System.out.println(x + ":" + y);
         short[] part = new short[side * side];
-        int index = x + width * y;
 
         int j = 0;
-        Integer beginRow = 0;
-        Integer lastRow = height - 1;
-
-        Integer beginColumn = 0;
-        Integer lastColumn = width - 1;
+        Pair yPair = new Pair(0, height - 1);
+        Pair xPair = new Pair(0, width - 1);
 
         //определение начальных и последних строк квадрата
-        detectLimits(y, beginRow, lastRow, height);
-        detectLimits(x, beginColumn, lastColumn, width);
+        detectLimits(y, yPair, height);
+        detectLimits(x, xPair, width);
 
-        for (int i = beginRow; i <= lastRow; i++) {
+        for (int i = yPair.first; i <= yPair.last; i++) {
             System.out.println("Row: " + i);
-            for (int k = beginColumn; k <= lastColumn; k++) {
+            for (int k = xPair.first; k <= xPair.last; k++) {
                 System.out.println("X: " + k);
                 part[j] = getBrightness(k, y);
+                j++;
             }
         }
         return new Image(side, side, y, part);
     }
 
-    private void detectLimits(int value, Integer first, Integer last, int measure){
+    private void detectLimits(int value, Pair pair, int measure){
         if (value >= side / 2 && value + side / 2 <= width) {
             //нормальная ситуация
-            first = value - side / 2;
-            last = value + side / 2;
+            pair.first = value - side / 2;
+            pair.last = value + side / 2;
         } else if (value < side / 2) {
             //сверху
-            last = side - 1;
+            pair.last = side - 1;
         } else if (width - side / 2 < value)
-            first = height - side - 1;
+            pair.first = height - side - 1;
     }
 
     public BufferedImage toBufferedImage() {
@@ -116,4 +113,15 @@ public class Image {
 
         return image;
     }
+
+    class Pair{
+        public int first;
+        public int last;
+
+        public Pair(int first, int last) {
+            this.first = first;
+            this.last = last;
+        }
+    }
+
 }
