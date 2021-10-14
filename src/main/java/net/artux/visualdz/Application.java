@@ -155,8 +155,7 @@ public class Application {
             @Override
             public void mouseClicked(MouseEvent e) {
                 zoomForm.setVisible(true);
-                renderImage(zoomForm.zoomField, chosenImageFile.getImage().getPart(e.getX(), e.getY()).toBufferedImage());
-                zoomForm.setCuttedImage(chosenImageFile.getImage().getPart(e.getX(), e.getY()));
+                zoomForm.setZoomedImage(chosenImageFile.getImage().getPart(e.getX(), e.getY(), 5));
             }
 
             @Override

@@ -1,16 +1,13 @@
 package net.artux.visualdz;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class ZoomForm extends JFrame{
     public JPanel rootPanel;
     public JCheckBox interpolationCheckBox;
     public JLabel zoomField;
     public JCheckBox brightCheckBox;
-    private Image cuttedImage;
+    private Image zoomedImage;
 
     ZoomForm(){
         setContentPane(rootPanel);
@@ -20,13 +17,19 @@ public class ZoomForm extends JFrame{
 
         interpolationCheckBox.addActionListener(e -> {
             if(interpolationCheckBox.isSelected()){
-                Image increasedImage = cuttedImage.bilinearInterpolation(7);
+                Image increasedImage = zoomedImage.bilinearInterpolation(7);
                 zoomField.setIcon(new ImageIcon(increasedImage.toBufferedImage()));
             }
         });
     }
-    public void setCuttedImage(Image cuttedImage)
+    public void setZoomedImage(Image zoomedImage)
     {
-        this.cuttedImage = cuttedImage;
+        this.zoomedImage = zoomedImage;
+        //отрисовка изображения
+        if (zoomedImage !=null)
+            zoomField.setIcon(new ImageIcon(zoomedImage.toBufferedImage()));
+        else
+            zoomField.setIcon(null);
+
     }
 }

@@ -46,32 +46,50 @@ public class Image {
         return offset;
     }
 
+    short[] setValue(short[] arr, int x, int y, short value, int width){
+        arr[x + y * width] = value;
+        return arr;
+    }
+
     public Image bilinearInterpolation(int mult){
-        short[] increasedBrightnessArray = new short[brightnessArray.length * mult * mult ];
-        for(int i = 0;i<increasedBrightnessArray.length;i++)
-        {
-            increasedBrightnessArray[i] = 0;
-        }
-        for(int i = 0;i<height;i++)
-        {
-            int skipY = (i*2+1)*mult/2* width* mult;
-            for(int j = 0;j<width;j++) {
-                int skipX = j * mult + mult/2;
-                increasedBrightnessArray[skipX + skipY] = brightnessArray[j+i*width];
+        short[] newarr = new short[brightnessArray.length * mult * mult ];
+        int nwidth = width * mult;
+        int nheight = height * mult;
+        int firstPos = mult/2;
+        for(int y = 0;y<height;y++) {
+            for(int x =0 ;x<width;x++) {
+                int nx = x * mult + firstPos;
+                int ny = y * mult + firstPos;
+                newarr = setValue(newarr, nx, ny, getBrightness(x,y), nwidth);
             }
         }
 
-        for(int i = mult/2;i<height*mult-mult;i++)
-        {
-            int i1 = increasedBrightnessArray[i],i2 = increasedBrightnessArray[i + mult],i3 = increasedBrightnessArray[i+width*mult],i4 = increasedBrightnessArray[i+width*mult+mult];
-            int d = i1,a = i2 - d,b = i3 - d,c = i4 - a - b - d;
-            for(int j = mult/2;j<width*mult-mult;j++) {
-                //тут если что нихера не доделано
-                int x = a *j + b * i +c * j * i -d;
+        for (int squareY = 0; squareY < width - 1; squareY++) {
+            for (int squareX = 0; squareX < height - 1; squareX++){
+                int skipedY1 = nwidth + squareY*nwidth * mult; // пропуск строк до первой нужной
+                int skipedY2 = skipedY1 + nwidth * mult;
+
+                int skipedX1 = firstPos + squareX*mult;
+                int skipedX2 = firstPos + (squareX + 1) * mult;
+
+                int i1 = newarr[skipedY1 + skipedX1],
+                        i2 = newarr[skipedY1 + skipedX2],
+                        i3 = newarr[skipedY2 + skipedX1],
+                        i4 = newarr[skipedY2 + skipedX2];
+                int d = i1, a = i2 - d, b = i3-d, c = i4 - a - b - d;
+                double yL = 0;
+                for (int y = skipedY1; y < skipedY2; y+=nwidth) {
+                    double xL = 0;
+                    for (int x = skipedX1; x < skipedX2; x++) {
+                        newarr[x + y] = (short)(a * xL + b * yL + c * xL * yL -d);
+                        xL += 1.0/mult;
+                    }
+                    yL += 1.0/mult;
+                }
             }
         }
-        Image increasedImage = new Image(width*mult,height*mult,0,increasedBrightnessArray);
-        return increasedImage;
+
+        return new Image(width*mult,height*mult,0,newarr);
     }
 
     //Получения значения яркости выбранного пикселя с учетом сдвига
@@ -89,10 +107,8 @@ public class Image {
         return brightnessArray[x + y * width];
     }
 
-    int side = 5;
 
-    public Image getPart(int x, int y) {
-        System.out.println(x + ":" + y);
+    public Image getPart(int x, int y, int side) {
         short[] part = new short[side * side];
 
         int j = 0;
@@ -104,9 +120,7 @@ public class Image {
         detectLimits(x, xPair, width);
 
         for (int i = yPair.first; i <= yPair.last; i++) {
-            System.out.println("Row: " + i);
             for (int k = xPair.first; k <= xPair.last; k++) {
-                System.out.println("X: " + k);
                 part[j] = getBrightness(k, y);
                 j++;
             }
@@ -114,7 +128,7 @@ public class Image {
         return new Image(side, side, y, part);
     }
 
-    private void detectLimits(int value, Pair pair, int measure){
+    private void detectLimits(int value, Pair pair, int side){
         if (value >= side / 2 && value + side / 2 <= width) {
             //нормальная ситуация
             pair.first = value - side / 2;
