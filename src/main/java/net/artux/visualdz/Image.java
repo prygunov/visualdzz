@@ -2,6 +2,7 @@ package net.artux.visualdz;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
+import java.util.Arrays;
 
 public class Image {
 
@@ -13,12 +14,16 @@ public class Image {
 
     //Конструктор, принимающий значения ширины, высоты, начальной строки и массив яркостей
     //значение сдвига устанавливается 0 по умолчанию
-    public Image(int width, int height, int beginRow, short[] brightnessArray) {
+    public Image(int width, int height, int beginRow, short[] brightnessArray, int offset) {
         this.beginRow = beginRow;
         this.width = width;
         this.height = height;
         this.brightnessArray = brightnessArray;
-        setOffset(0);
+        setOffset(offset);
+    }
+
+    public Image(int width, int height, int beginRow, short[] brightnessArray) {
+        this(width, height,beginRow,brightnessArray, 0);
     }
 
     //Геттер ширины
@@ -52,6 +57,7 @@ public class Image {
     }
 
     public Image bilinearInterpolation(int mult){
+        System.out.println("Interpolation");
         short[] newarr = new short[brightnessArray.length * mult * mult ];
         int nwidth = width * mult;
         int nheight = height * mult;
@@ -66,7 +72,8 @@ public class Image {
 
         for (int squareY = 0; squareY < width - 1; squareY++) {
             for (int squareX = 0; squareX < height - 1; squareX++){
-                int skipedY1 = nwidth + squareY*nwidth * mult; // пропуск строк до первой нужной
+                // пропуск строк до первой нужной
+                int skipedY1 = nwidth * (mult/2) + squareY*nwidth * mult;
                 int skipedY2 = skipedY1 + nwidth * mult;
 
                 int skipedX1 = firstPos + squareX*mult;
@@ -81,15 +88,15 @@ public class Image {
                 for (int y = skipedY1; y < skipedY2; y+=nwidth) {
                     double xL = 0;
                     for (int x = skipedX1; x < skipedX2; x++) {
-                        newarr[x + y] = (short)(a * xL + b * yL + c * xL * yL -d);
-                        xL += 1.0/mult;
+                        newarr[x + y] = (short) Math.abs(a * xL/mult + b * yL/mult + c * xL/mult * yL/mult -d);
+                        xL += 1;
                     }
-                    yL += 1.0/mult;
+                    yL += 1;
                 }
             }
         }
-
-        return new Image(width*mult,height*mult,0,newarr);
+        System.out.println("Interpolation end");
+        return new Image(width*mult,height*mult,0,newarr,offset);
     }
 
     //Получения значения яркости выбранного пикселя с учетом сдвига
@@ -107,25 +114,28 @@ public class Image {
         return brightnessArray[x + y * width];
     }
 
-
     public Image getPart(int x, int y, int side) {
-        short[] part = new short[side * side];
-
         int j = 0;
         Pair yPair = new Pair(0, height - 1);
         Pair xPair = new Pair(0, width - 1);
 
         //определение начальных и последних строк квадрата
-        detectLimits(y, yPair, height);
-        detectLimits(x, xPair, width);
+        detectLimits(y, yPair, side);
+        detectLimits(x, xPair, side);
+        System.out.println(x + " : " + y);
+
+        System.out.println("y" + yPair);
+        System.out.println("x" + xPair);
+
+        short[] part = new short[side * side];
 
         for (int i = yPair.first; i <= yPair.last; i++) {
             for (int k = xPair.first; k <= xPair.last; k++) {
-                part[j] = getBrightness(k, y);
+                part[j] = getBrightness(k, i);
                 j++;
             }
         }
-        return new Image(side, side, y, part);
+        return new Image(side, side, y, part, offset);
     }
 
     private void detectLimits(int value, Pair pair, int side){
@@ -163,6 +173,14 @@ public class Image {
         public Pair(int first, int last) {
             this.first = first;
             this.last = last;
+        }
+
+        @Override
+        public String toString() {
+            return "Pair{" +
+                    "first=" + first +
+                    ", last=" + last +
+                    '}';
         }
     }
 

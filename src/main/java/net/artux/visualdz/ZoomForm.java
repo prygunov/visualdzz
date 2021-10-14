@@ -11,25 +11,33 @@ public class ZoomForm extends JFrame{
 
     ZoomForm(){
         setContentPane(rootPanel);
-        setSize(150, 200);
+        setSize(300, 300);
         setLocation(300, 300);
         setTitle("Лупа");
+        setAlwaysOnTop(true);
 
         interpolationCheckBox.addActionListener(e -> {
-            if(interpolationCheckBox.isSelected()){
-                Image increasedImage = zoomedImage.bilinearInterpolation(7);
-                zoomField.setIcon(new ImageIcon(increasedImage.toBufferedImage()));
-            }
+            update();
         });
     }
     public void setZoomedImage(Image zoomedImage)
     {
         this.zoomedImage = zoomedImage;
+        update();
+    }
+
+    void update(){
+        if(interpolationCheckBox.isSelected()){
+            render(zoomedImage.bilinearInterpolation(15));
+        }else
+            render(zoomedImage);
+    }
+
+    public void render(Image image){
         //отрисовка изображения
         if (zoomedImage !=null)
-            zoomField.setIcon(new ImageIcon(zoomedImage.toBufferedImage()));
+            zoomField.setIcon(new ImageIcon(image.toBufferedImage()));
         else
             zoomField.setIcon(null);
-
     }
 }
