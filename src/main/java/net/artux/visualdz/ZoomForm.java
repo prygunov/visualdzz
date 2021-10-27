@@ -43,11 +43,12 @@ public class ZoomForm extends JFrame{
         //отрисовка изображения
         if (zoomedImage !=null) {
             if (interpolationCheckBox.isSelected())
-                image = image.bilinearInterpolation(zoom);
+                image = ImageHelper.bilinearInterpolation(image, zoom);
             else
-                image = image.lochZoom(zoom);
+                image = ImageHelper.neighbourZoom(image, zoom);
             if (brightCheckBox.isSelected())
-                image = image.normalizeImage();
+                image = ImageHelper.normalizeImage(image);
+
             zoomField.setIcon(new ImageIcon(image.toBufferedImage()));
             setSize(zoomField.getIcon().getIconWidth() + 30, zoomField.getIcon().getIconHeight() + 160);
         }

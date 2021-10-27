@@ -6,7 +6,7 @@ import java.io.FileInputStream;
 
 public class ImageFile {
 
-  private File file;
+  private final File file;
   private int width;
   private int height;
   private Image image;
