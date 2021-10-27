@@ -1,8 +1,6 @@
 package net.artux.visualdz;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 public class ZoomForm extends JFrame{
     public JPanel rootPanel;
@@ -18,19 +16,9 @@ public class ZoomForm extends JFrame{
         setTitle("Лупа");
         setAlwaysOnTop(true);
 
-        interpolationCheckBox.addActionListener(e -> {
-            update(zoomedImage);
-        });
-        brightCheckBox.addActionListener(e -> {
-            update(zoomedImage);
-        });
-        zoomSlider.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                update(zoomedImage);
-            }
-        });
-
+        interpolationCheckBox.addActionListener(e -> update(zoomedImage));
+        brightCheckBox.addActionListener(e -> update(zoomedImage));
+        zoomSlider.addChangeListener(e -> update(zoomedImage));
     }
     public void setZoomedImage(Image zoomedImage)
     {
@@ -40,7 +28,7 @@ public class ZoomForm extends JFrame{
 
     public void update(Image image){
         int zoom = zoomSlider.getValue();
-        //отрисовка изображения
+
         if (zoomedImage !=null) {
             if (interpolationCheckBox.isSelected())
                 image = ImageHelper.bilinearInterpolation(image, zoom);
@@ -49,7 +37,7 @@ public class ZoomForm extends JFrame{
             if (brightCheckBox.isSelected())
                 image = ImageHelper.normalizeImage(image);
 
-            zoomField.setIcon(new ImageIcon(image.toBufferedImage()));
+            zoomField.setIcon(new ImageIcon(image.toBufferedImage()));//отрисовка изображения
             setSize(zoomField.getIcon().getIconWidth() + 30, zoomField.getIcon().getIconHeight() + 160);
         }
         else

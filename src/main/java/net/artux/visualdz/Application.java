@@ -10,8 +10,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 public class Application {
 
@@ -74,38 +72,32 @@ public class Application {
         public void actionPerformed(ActionEvent e) {
             Arrays
                     .stream(chooseFiles())
-                    .filter(new Predicate<File>() {
-                        @Override
-                        public boolean test(File file) {
-                            for (String format : supportedFormats) {
-                                //проверяем совпадает ли формат файла с поддерживаемыми
-                                if (file.getName().contains(format)) {
-                                    for (ImageFile oldImageFile : imageFiles)
-                                        if (file.getName().equals(oldImageFile.getFile().getName()))
-                                            return false; // если подобный файл уже был загружен, исключаем из списка
+                    .filter(file -> {
+                        for (String format : supportedFormats) {
+                            //проверяем совпадает ли формат файла с поддерживаемыми
+                            if (file.getName().contains(format)) {
+                                for (ImageFile oldImageFile : imageFiles)
+                                    if (file.getName().equals(oldImageFile.getFile().getName()))
+                                        return false; // если подобный файл уже был загружен, исключаем из списка
 
-                                    return true; // если файл еще не был загружен, оставляем в списке
-                                }
+                                return true; // если файл еще не был загружен, оставляем в списке
                             }
-                            return false;// неподдерживаемый формат
                         }
-                    }).forEach(new Consumer<File>() {
-                @Override
-                public void accept(File file) {
-                    try {
-                        // добавляем к списку выбранных файл-изображение
-                        imageFiles.add(new ImageFile(file));
-                        // добавляем имя файла в выпадающий список
-                        mainForm.filesBox.addItem(file.getName());
-                        if(imageFiles.size() == 1) {
-                            mainForm.showButton.setEnabled(true);
-                            setImage(imageFiles.get(0));
+                        return false;// неподдерживаемый формат
+                    }).forEach(file -> {
+                        try {
+                            // добавляем к списку выбранных файл-изображение
+                            imageFiles.add(new ImageFile(file));
+                            // добавляем имя файла в выпадающий список
+                            mainForm.filesBox.addItem(file.getName());
+                            if(imageFiles.size() == 1) {
+                                mainForm.showButton.setEnabled(true);
+                                setImage(imageFiles.get(0));
+                            }
+                        } catch (Exception exception) {
+                            JOptionPane.showMessageDialog(mainForm, "Ошибка, не удалось определить размер изображения: " + exception.getMessage());
                         }
-                    } catch (Exception exception) {
-                        JOptionPane.showMessageDialog(mainForm, "Ошибка, не удалось определить размер изображения: " + exception.getMessage());
-                    }
-                }
-            });
+                    });
         }
     };
 

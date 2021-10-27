@@ -5,10 +5,10 @@ import java.awt.image.DataBufferInt;
 
 public class Image {
 
-    private int width;
-    private int height;
+    private final int width;
+    private final int height;
     private int offset; //переменная сдвига
-    private int beginRow; //переменная начальной строки
+    private final int beginRow; //переменная начальной строки
     private final short[] brightnessArray; //массив яркостей
 
     //Конструктор, принимающий значения ширины, высоты, начальной строки и массив яркостей
@@ -86,10 +86,7 @@ public class Image {
             // реализуется с помощью побитового сдвига
             targetPixels[i] = (brightness << 16) | (brightness << 8) | (brightness);
         }
-
         return image;
     }
-
-
 
 }
