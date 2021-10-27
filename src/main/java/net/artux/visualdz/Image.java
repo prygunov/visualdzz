@@ -55,7 +55,20 @@ public class Image {
         arr[x + y * width] = value;
         return arr;
     }
+    public Image lochZoom(int mult){
+        short[] newarr = new short[brightnessArray.length * mult * mult ];
+        int curY = 0;
+        for(int y = 0;y<height*mult;y++) {
+            int curX = 0;
+            for(int x =0 ;x<width*mult;x++) {
+                if(x != 0 && x%mult == 0) curX++;
+                newarr[y*width*mult+x] = brightnessArray[curX + curY*width];
 
+            }
+            if(y != 0 && y%mult == 0) curY++;
+        }
+        return new Image(width*mult,height*mult,0,newarr,offset);
+    }
     public Image bilinearInterpolation(int mult){
         System.out.println("Interpolation");
         short[] newarr = new short[brightnessArray.length * mult * mult ];
@@ -87,8 +100,10 @@ public class Image {
                 double yL = 0;
                 for (int y = skipedY1; y < skipedY2; y+=nwidth) {
                     double xL = 0;
-                    for (int x = skipedX1; x < skipedX2; x++) {
-                        newarr[x + y] = (short) Math.abs(a * xL/mult + b * yL/mult + c * xL/mult * yL/mult -d);
+                    for (int x = skipedX1; x <= skipedX2; x++) {
+                        double nX = a * xL/mult + b * yL/mult + c * xL/mult * yL/mult +d;
+                        //if(nX >1023) nX = 1023;
+                        newarr[x + y] = (short)nX;
                         xL += 1;
                     }
                     yL += 1;

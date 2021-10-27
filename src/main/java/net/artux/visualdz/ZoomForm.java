@@ -28,15 +28,16 @@ public class ZoomForm extends JFrame{
 
     void update(){
         if(interpolationCheckBox.isSelected()){
-            render(zoomedImage.bilinearInterpolation(15));
+            render(zoomedImage.bilinearInterpolation(9));
         }else
-            render(zoomedImage);
+            render(zoomedImage.lochZoom(9));
     }
 
     public void render(Image image){
         //отрисовка изображения
-        if (zoomedImage !=null)
+        if (zoomedImage !=null) {
             zoomField.setIcon(new ImageIcon(image.toBufferedImage()));
+        }
         else
             zoomField.setIcon(null);
     }
