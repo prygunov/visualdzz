@@ -45,6 +45,7 @@
               <component id="5dcfb" class="javax.swing.JSlider" binding="slider1" default-binding="true">
                 <constraints border-constraint="North"/>
                 <properties>
+                  <majorTickSpacing value="2"/>
                   <maximum value="9"/>
                   <minimum value="3"/>
                   <minorTickSpacing value="2"/>
