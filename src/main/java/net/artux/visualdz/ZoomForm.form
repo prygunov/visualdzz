@@ -37,6 +37,25 @@
               <text value=""/>
             </properties>
           </component>
+          <grid id="d962e" layout-manager="BorderLayout" hgap="0" vgap="0">
+            <constraints border-constraint="North"/>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="5dcfb" class="javax.swing.JSlider" binding="slider1" default-binding="true">
+                <constraints border-constraint="North"/>
+                <properties>
+                  <maximum value="9"/>
+                  <minimum value="3"/>
+                  <minorTickSpacing value="2"/>
+                  <paintLabels value="true"/>
+                  <paintTicks value="true"/>
+                  <snapToTicks value="true"/>
+                  <value value="5"/>
+                </properties>
+              </component>
+            </children>
+          </grid>
         </children>
       </grid>
     </children>

@@ -7,6 +7,7 @@ public class ZoomForm extends JFrame{
     public JCheckBox interpolationCheckBox;
     public JLabel zoomField;
     public JCheckBox brightCheckBox;
+    public JSlider slider1;
     private Image zoomedImage;
 
     ZoomForm(){
@@ -33,7 +34,7 @@ public class ZoomForm extends JFrame{
         //отрисовка изображения
         if (zoomedImage !=null) {
             if (interpolationCheckBox.isSelected())
-                image = image.bilinearInterpolation(15);
+                image = image.bilinearInterpolation(9);
             else
                 image = image.lochZoom(9);
             if (brightCheckBox.isSelected())

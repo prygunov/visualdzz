@@ -101,7 +101,6 @@ public class Image {
                     double xL = 0;
                     for (int x = skipedX1; x <= skipedX2; x++) {
                         double nX = a * xL/mult + b * yL/mult + c * xL/mult * yL/mult +d;
-                        //if(nX >1023) nX = 1023;
                         newarr[x + y] = (short)nX;
                         xL += 1;
                     }
@@ -134,8 +133,8 @@ public class Image {
         Pair xPair = new Pair(0, width - 1);
 
         //определение начальных и последних строк квадрата
-        detectLimits(y, yPair, side);
-        detectLimits(x, xPair, side);
+        detectLimits(y, yPair, side, height);
+        detectLimits(x, xPair, side, width);
         System.out.println(x + " : " + y);
 
         System.out.println("y" + yPair);
@@ -152,16 +151,16 @@ public class Image {
         return new Image(side, side, y, part, offset);
     }
 
-    private void detectLimits(int value, Pair pair, int side){
-        if (value >= side / 2 && value + side / 2 <= width) {
+    private void detectLimits(int value, Pair pair, int side, int limit){
+        if (value - side / 2 >= 0 && value + side / 2 <= limit-1) {
             //нормальная ситуация
             pair.first = value - side / 2;
             pair.last = value + side / 2;
-        } else if (value < side / 2) {
+        } else if (value <= side / 2) {
             //сверху
             pair.last = side - 1;
-        } else if (width - side / 2 < value)
-            pair.first = height - side - 1;
+        } else if (limit - side / 2 <= value)
+            pair.first = limit - side;
     }
 
     public BufferedImage toBufferedImage() {
