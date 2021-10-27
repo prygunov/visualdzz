@@ -2,7 +2,6 @@ package net.artux.visualdz;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
-import java.util.Arrays;
 
 public class Image {
 
@@ -179,6 +178,21 @@ public class Image {
         }
 
         return image;
+    }
+
+    public Image normalizeImage() {
+        short[] normPixels = new short[brightnessArray.length];
+        short min = 1023, max = 0;
+        double mult;
+        for (short pixel : brightnessArray) {
+            max = (short) Math.max(max, pixel);
+            min = (short) Math.min(min, pixel);
+        }
+        mult = 255.0 / (max - min);
+        for (int i = 0; i < brightnessArray.length; i++) {
+            normPixels[i] = (short) ((brightnessArray[i] - min) * mult);
+        }
+        return new Image(width,height,0,normPixels);
     }
 
     class Pair{
