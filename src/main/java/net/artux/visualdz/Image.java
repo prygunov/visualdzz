@@ -69,7 +69,6 @@ public class Image {
         return new Image(width*mult,height*mult,0,newarr,offset);
     }
     public Image bilinearInterpolation(int mult){
-        System.out.println("Interpolation");
         short[] newarr = new short[brightnessArray.length * mult * mult ];
         int nwidth = width * mult;
         int nheight = height * mult;
@@ -108,7 +107,6 @@ public class Image {
                 }
             }
         }
-        System.out.println("Interpolation end");
         return new Image(width*mult,height*mult,0,newarr,offset);
     }
 
@@ -136,9 +134,6 @@ public class Image {
         detectLimits(y, yPair, side, height);
         detectLimits(x, xPair, side, width);
         System.out.println(x + " : " + y);
-
-        System.out.println("y" + yPair);
-        System.out.println("x" + xPair);
 
         short[] part = new short[side * side];
 

@@ -34,17 +34,22 @@
           <component id="17ce3" class="javax.swing.JLabel" binding="zoomField">
             <constraints border-constraint="Center"/>
             <properties>
+              <horizontalAlignment value="0"/>
+              <horizontalTextPosition value="0"/>
               <text value=""/>
             </properties>
           </component>
           <grid id="d962e" layout-manager="BorderLayout" hgap="0" vgap="0">
             <constraints border-constraint="North"/>
             <properties/>
-            <border type="none"/>
+            <border type="none" title="Увеличение">
+              <font/>
+            </border>
             <children>
-              <component id="5dcfb" class="javax.swing.JSlider" binding="slider1" default-binding="true">
+              <component id="5dcfb" class="javax.swing.JSlider" binding="zoomSlider">
                 <constraints border-constraint="North"/>
                 <properties>
+                  <enabled value="true"/>
                   <majorTickSpacing value="2"/>
                   <maximum value="9"/>
                   <minimum value="3"/>
