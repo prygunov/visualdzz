@@ -5,7 +5,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.event.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,7 +50,7 @@ public class Application {
                         chosenImageFile.readWithBeginRow(row, mainForm.offsetSlider.getValue());
                         // чтение из памяти изображения в озу, с учетом начальной строки
                         // рисуем изображение
-                        renderImage(mainForm.imageFrame, chosenImageFile.getImage().toBufferedImage());
+                        renderImage(mainForm.imageFrame, chosenImageFile.getImage());
                     } catch (Exception exception) {
                         // в случае ошибки говорим об этом диалоговым окном
                         JOptionPane.showMessageDialog(mainForm, "Ошибка, не удалось прочесть файл: " + exception.getMessage());
@@ -108,7 +107,7 @@ public class Application {
             if (chosenImageFile.getImage() != null) {
                 //если изображение присутствует в озу меняем сдвиг и показываем на экран
                 chosenImageFile.getImage().setOffset(mainForm.offsetSlider.getValue());
-                renderImage(mainForm.imageFrame, chosenImageFile.getImage().toBufferedImage());
+                renderImage(mainForm.imageFrame, chosenImageFile.getImage());
             }
         }
     };
@@ -178,22 +177,26 @@ public class Application {
         //показ размера файлов
         mainForm.sizeLabel.setText(imageFile.getWidth() + "X" + imageFile.getHeight());
 
+
         if (imageFile.getImage()!=null) {
             //если изображение присутствует в озу показываем его на экран и устанавливаем его значения
             mainForm.beginRowField.setValue(imageFile.getImage().getBeginRow());
             mainForm.offsetSlider.setValue(imageFile.getImage().getOffset());
-            renderImage(mainForm.imageFrame, imageFile.getImage().toBufferedImage());
+
+
+            renderImage(mainForm.imageFrame, imageFile.getImage());
         } else {
             mainForm.beginRowField.setValue(0);
             renderImage(mainForm.imageFrame, null);
         }
     }
 
-    protected void renderImage(JLabel frame, BufferedImage visibleImage) {
+    protected void renderImage(JLabel frame, Image image) {
         //отрисовка изображения
-        if (visibleImage !=null)
-            frame.setIcon(new ImageIcon(visibleImage));
-        else
+        if (image !=null) {
+            mainForm.updateChart(image.getVisibleArray());
+            frame.setIcon(new ImageIcon(image.toBufferedImage()));
+        } else
             frame.setIcon(null);
     }
 

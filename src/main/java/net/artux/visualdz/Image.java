@@ -74,6 +74,14 @@ public class Image {
         return brightnessArray;
     }
 
+    public short[] getVisibleArray(){
+        short[] targetPixels = new short[brightnessArray.length];
+        for (int i = 0; i < brightnessArray.length; i++) {
+            targetPixels[i] = (short) getVisibleBrightness(i);
+        }
+        return targetPixels;
+    }
+
     public BufferedImage toBufferedImage() {
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_BGR);
         // достаём ссылку на массив пикселей изображения
