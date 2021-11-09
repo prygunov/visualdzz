@@ -22,8 +22,8 @@ import org.jfree.util.Rotation;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Arrays;
-import java.util.Random;
+import java.util.*;
+import java.util.List;
 
 public class MainForm extends JFrame {
     public JPanel rootPanel;
@@ -43,9 +43,10 @@ public class MainForm extends JFrame {
     public JSpinner beginRowField;
     public JTextField factYField;
     public JPanel chartPanel;
-    public JSlider slider1;
-    public JSlider slider2;
-    public JFreeChart jFreeChart;
+    public JSlider leftSlider;
+    public JSlider rightSlider;
+    public JLabel rightValue;
+    public JLabel leftValue;
 
     MainForm() {
         setContentPane(rootPanel);
@@ -59,33 +60,38 @@ public class MainForm extends JFrame {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
 
-    public void updateChart(short[] arr){
-        Arrays.sort(arr);
+    Map<Short, Integer> counts = new HashMap<>();
+    int lastHashCode = 0;
 
+    public void updateChart(short[] arr, int min, int max){
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-        short buffer;
-        int counter;
-        for (int i = 0; i < arr.length; i++) {
-            buffer = arr[i];
-            counter = 1;
 
-            while (i < arr.length && arr[i] == buffer) {
-                counter++;
-                i++;
+
+        if (Arrays.hashCode(arr)!=lastHashCode){
+            lastHashCode = Arrays.hashCode(arr);
+            counts = new HashMap<>();
+
+            for (short value : arr) {
+                if (counts.containsKey(value))
+                    counts.put(value, counts.get(value) + 1);
+                else counts.put(value,  1);
             }
-            if (i < arr.length)
-                dataset.addValue(counter,"", ""+arr[i]);
+        }
+
+        for(int i = min; i< max;i++)
+        {
+            if (counts.containsKey((short)i))
+                dataset.addValue(counts.get((short)i),"", ""+i);
+            else
+                dataset.addValue(0,"", ""+i);
         }
 
         JFreeChart chart = createChart(dataset);
-        // we put the chart into a panel
         ChartPanel chartPanel = new ChartPanel(chart);
-        // add it to our application
         this.chartPanel.removeAll();
         this.chartPanel.add(chartPanel);
         this.chartPanel.revalidate();
     }
-
 
     private JFreeChart createChart(CategoryDataset dataset)
     {
@@ -93,7 +99,7 @@ public class MainForm extends JFrame {
                 "",
                 null,                   // x-axis label
                 "",                // y-axis label
-                dataset, PlotOrientation.VERTICAL,true, false, false);
+                dataset, PlotOrientation.VERTICAL,false, false, false);
 
 
         CategoryPlot plot = (CategoryPlot) chart.getPlot();
@@ -103,7 +109,6 @@ public class MainForm extends JFrame {
         plot.getDomainAxis().setLowerMargin(0);
 
         BarRenderer renderer = (BarRenderer) plot.getRenderer();
-        //renderer.setSeriesPaint(0, Color.BLACK);
         renderer.setDrawBarOutline(false);
         renderer.setItemMargin(0);
         renderer.setShadowVisible(false);
@@ -111,12 +116,6 @@ public class MainForm extends JFrame {
 
         renderer.setBarPainter(new StandardBarPainter());
         renderer.setSeriesPaint(0, Color.black);
-        /*NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
-        rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-        BarRenderer renderer = (BarRenderer) plot.getRenderer();
-        renderer.setDrawBarOutline(false);
-
-        chart.getLegend().setFrame(BlockBorder.NONE);*/
 
         return chart;
     }

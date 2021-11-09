@@ -2,6 +2,7 @@ package net.artux.visualdz;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
+import java.util.Arrays;
 
 public class Image {
 
@@ -97,4 +98,27 @@ public class Image {
         return image;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Image image = (Image) o;
+
+        if (width != image.width) return false;
+        if (height != image.height) return false;
+        if (offset != image.offset) return false;
+        if (beginRow != image.beginRow) return false;
+        return Arrays.equals(brightnessArray, image.brightnessArray);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = width;
+        result = 31 * result + height;
+        result = 31 * result + offset;
+        result = 31 * result + beginRow;
+        result = 31 * result + Arrays.hashCode(brightnessArray);
+        return result;
+    }
 }

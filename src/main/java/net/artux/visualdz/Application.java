@@ -112,6 +112,22 @@ public class Application {
         }
     };
 
+    //обработчик изменения сдвига в окне
+    ChangeListener minMaxChangeListener = new ChangeListener() {
+        @Override
+        public void stateChanged(ChangeEvent e) {
+            mainForm.leftValue.setText(String.valueOf(mainForm.leftSlider.getValue()));
+            mainForm.rightValue.setText(String.valueOf(mainForm.rightSlider.getValue()));
+
+            mainForm.leftSlider.setMaximum(mainForm.rightSlider.getValue());
+            mainForm.rightSlider.setMinimum(mainForm.leftSlider.getValue());
+
+            if (chosenImageFile.getImage() != null) {
+                mainForm.updateChart(chosenImageFile.getImage().getVisibleArray(), mainForm.leftSlider.getValue(), mainForm.rightSlider.getValue());
+            }
+        }
+    };
+
 
     Application(){
         mainForm = new MainForm();
@@ -122,6 +138,8 @@ public class Application {
         mainForm.showButton.addActionListener(showButtonClickListener);
         mainForm.filesBox.addActionListener(filesBoxChangedListener);
         mainForm.offsetSlider.addChangeListener(offsetChangeListener);
+        mainForm.leftSlider.addChangeListener(minMaxChangeListener);
+        mainForm.rightSlider.addChangeListener(minMaxChangeListener);
 
         // обработчик позиции мыши
         mainForm.imageFrame.addMouseMotionListener(new MouseMotionListener() {
@@ -194,7 +212,7 @@ public class Application {
     protected void renderImage(JLabel frame, Image image) {
         //отрисовка изображения
         if (image !=null) {
-            mainForm.updateChart(image.getVisibleArray());
+            mainForm.updateChart(image.getVisibleArray(), mainForm.leftSlider.getValue(), mainForm.rightSlider.getValue());
             frame.setIcon(new ImageIcon(image.toBufferedImage()));
         } else
             frame.setIcon(null);
