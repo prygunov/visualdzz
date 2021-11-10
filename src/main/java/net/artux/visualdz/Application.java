@@ -119,10 +119,10 @@ public class Application {
             mainForm.leftValue.setText(String.valueOf(mainForm.leftSlider.getValue()));
             mainForm.rightValue.setText(String.valueOf(mainForm.rightSlider.getValue()));
 
-            mainForm.leftSlider.setMaximum(mainForm.rightSlider.getValue()-1);
+            mainForm.leftSlider.setMaximum(mainForm.rightSlider.getValue());
             mainForm.rightSlider.setMinimum(mainForm.leftSlider.getValue());
 
-            if (chosenImageFile.getImage() != null) {
+            if (chosenImageFile != null) {
                 mainForm.updateChart(chosenImageFile.getImage().getVisibleArray(), mainForm.leftSlider.getValue(), mainForm.rightSlider.getValue());
             }
         }
