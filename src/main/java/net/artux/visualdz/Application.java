@@ -19,7 +19,7 @@ public class Application {
 
     private final List<ImageFile> imageFiles = new ArrayList<>(); // список выбранных файлов-изображений
     private ImageFile chosenImageFile; // последний выбранный файл-изображения
-
+    private int minS = 0, maxS = 255;
     //обработчик выбора полосы изображения
     ActionListener filesBoxChangedListener = new ActionListener() {
         @Override
@@ -116,14 +116,31 @@ public class Application {
     ChangeListener minMaxChangeListener = new ChangeListener() {
         @Override
         public void stateChanged(ChangeEvent e) {
+            if(mainForm.lockCheckBox.isSelected()) {
+                int dif;
+                if(e.getSource().equals(mainForm.leftSlider)){
+                    dif = mainForm.leftSlider.getValue() - minS;
+                    if(maxS + dif < 255)
+                    mainForm.rightSlider.setValue(maxS+dif);
+                }
+                else{
+                    dif = mainForm.rightSlider.getValue() - maxS;
+                    if(minS + dif > 0)
+                    mainForm.leftSlider.setValue(minS+dif);
+                }
+            }
+
             mainForm.leftValue.setText(String.valueOf(mainForm.leftSlider.getValue()));
             mainForm.rightValue.setText(String.valueOf(mainForm.rightSlider.getValue()));
 
-            mainForm.leftSlider.setMaximum(mainForm.rightSlider.getValue());
-            mainForm.rightSlider.setMinimum(mainForm.leftSlider.getValue());
+            maxS = mainForm.rightSlider.getValue();
+            minS = mainForm.leftSlider.getValue();
+
+            mainForm.leftSlider.setMaximum(maxS);
+            mainForm.rightSlider.setMinimum(minS);
 
             if (chosenImageFile != null) {
-                mainForm.updateChart(chosenImageFile.getImage().getVisibleArray(), mainForm.leftSlider.getValue(), mainForm.rightSlider.getValue());
+                mainForm.updateChart(chosenImageFile.getImage().getVisibleArray(), minS, maxS);
             }
         }
     };

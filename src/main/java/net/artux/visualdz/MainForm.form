@@ -250,7 +250,7 @@
           </scrollpane>
         </children>
       </grid>
-      <grid id="d471" layout-manager="GridLayoutManager" row-count="4" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="d471" layout-manager="GridLayoutManager" row-count="4" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints border-constraint="East"/>
         <properties>
@@ -311,6 +311,14 @@
             </constraints>
             <properties>
               <text value="Label"/>
+            </properties>
+          </component>
+          <component id="f5d56" class="javax.swing.JCheckBox" binding="lockCheckBox" default-binding="true">
+            <constraints>
+              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="Закреп"/>
             </properties>
           </component>
         </children>

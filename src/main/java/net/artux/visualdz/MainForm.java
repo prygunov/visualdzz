@@ -47,6 +47,7 @@ public class MainForm extends JFrame {
     public JSlider rightSlider;
     public JLabel rightValue;
     public JLabel leftValue;
+    public JCheckBox lockCheckBox;
 
     MainForm() {
         setContentPane(rootPanel);
