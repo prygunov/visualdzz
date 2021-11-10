@@ -42,6 +42,8 @@ public class MainForm extends JFrame {
     public JCheckBox lockCheckBox;
     public JPanel chartPanel1;
     public JPanel chartPanel2;
+    public JComboBox leftSliderBox;
+    public JComboBox rightSliderBox;
 
     MainForm() {
         setContentPane(rootPanel);
@@ -51,13 +53,20 @@ public class MainForm extends JFrame {
         setVisible(true);
         setTitle("POOVD");
 
+        fillBox(leftSliderBox);
+        fillBox(rightSliderBox);
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
 
     Map<Short, Integer> counts = new HashMap<>();
     int lastHashCode = 0;
-
+    private void fillBox(JComboBox box){
+        box.addItem("Приравнять к значению");
+        box.addItem("Установить равным мин/макс");
+        box.addItem("Считать равным 0");
+        box.addItem("Нормировать");
+    }
     public void updateChart(short[] arr, int min, int max){
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 
@@ -144,4 +153,7 @@ public class MainForm extends JFrame {
         return chart;
     }
 
+    private void createUIComponents() {
+        // TODO: place custom component creation code here
+    }
 }

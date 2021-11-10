@@ -113,21 +113,35 @@ public class Image {
         return image;
     }
 
-    public BufferedImage toBufferedImage(int min, int max) {
+    public BufferedImage toBufferedImage(int min, int max, int modeLeft, int modeRight) {
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_BGR);
         // достаём ссылку на массив пикселей изображения
         int[] targetPixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
+        if(modeLeft == 3 && modeRight == 3){
+            short[] normPixels = new short[brightnessArray.length];
 
-        // заполняем с помощью массива яркостей
-        for (int i = 0; i < brightnessArray.length; i++) {
-            int brightness = getVisibleBrightness(i);
-            if (brightness < min)
-                brightness = 0;
-            else if (brightness > max)
-                brightness = 255;
-            // в одном int(4 байта) можно представить 3 байта цвета
-            // реализуется с помощью побитового сдвига
-            targetPixels[i] = (brightness << 16) | (brightness << 8) | (brightness);
+            double mult = 255.0 / (max - min);
+            for (int i = 0; i < normPixels.length; i++) {
+                int brightness = getVisibleBrightness(i);
+                if(brightness >= min && brightness <= max) {
+                    normPixels[i] = (short) ((brightness - min) * mult);
+                    targetPixels[i] = (normPixels[i] << 16) | (normPixels[i] << 8) | (normPixels[i]);
+                }
+            }
+        }
+        else {
+            // заполняем с помощью массива яркостей
+            for (int i = 0; i < brightnessArray.length; i++) {
+                int brightness = getVisibleBrightness(i);
+                if (brightness < min)
+                    brightness = 0;
+                else if (brightness > max)
+                    brightness = 255;
+                // в одном int(4 байта) можно представить 3 байта цвета
+                // реализуется с помощью побитового сдвига
+                targetPixels[i] = (brightness << 16) | (brightness << 8) | (brightness);
+            }
+
         }
         return image;
     }

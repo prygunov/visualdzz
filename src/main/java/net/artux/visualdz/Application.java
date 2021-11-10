@@ -125,18 +125,6 @@ public class Application {
         }
     };
 
-   /* void setSliderLimits(JSlider slider, int dif){
-        int minLeft = slider.getValue() - dif;
-        if(minLeft < 0)
-            minLeft = 0;
-
-        int maxLeft = slider.getValue() + dif;
-        if (maxLeft > 255)
-            maxLeft = 255;
-        slider.setMinimum(minLeft);
-        slider.setMaximum(maxLeft);
-    }*/
-
     //обработчик изменения сдвига в окне
     ChangeListener minMaxChangeListener = new ChangeListener() {
         @Override
@@ -207,19 +195,25 @@ public class Application {
                 mainForm.factYField.setText(String.valueOf(y));
                 mainForm.brightnessField.setText(String.valueOf(chosenImageFile.getImage().getBrightness(x, y)));
                 mainForm.factBrightnessField.setText(String.valueOf(chosenImageFile.getImage().getVisibleBrightness(x, y)));
-                mainForm.updateLineChart(mainForm.chartPanel1, chosenImageFile.getImage().getVisibleArray(y, true),
-                        mainForm.leftSlider.getValue(), mainForm.rightSlider.getValue(), true);
 
-
-                mainForm.updateLineChart(mainForm.chartPanel2, chosenImageFile.getImage().getVisibleArray(x, false),
-                        mainForm.leftSlider.getValue(), mainForm.rightSlider.getValue(), false);
             }
         });
         mainForm.imageFrame.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                zoomForm.setVisible(true);
-                zoomForm.setZoomedImage(ImageHelper.getPart(chosenImageFile.getImage(), e.getX(), e.getY(), 45));
+                if(e.getButton() == MouseEvent.BUTTON1)
+                {
+                    zoomForm.setVisible(true);
+                    zoomForm.setZoomedImage(ImageHelper.getPart(chosenImageFile.getImage(), e.getX(), e.getY(), 45));
+                }
+                else if(e.getButton() == MouseEvent.BUTTON3){
+                    mainForm.updateLineChart(mainForm.chartPanel1, chosenImageFile.getImage().getVisibleArray(e.getY(), true),
+                            mainForm.leftSlider.getValue(), mainForm.rightSlider.getValue(), true);
+
+
+                    mainForm.updateLineChart(mainForm.chartPanel2, chosenImageFile.getImage().getVisibleArray(e.getX(), false),
+                            mainForm.leftSlider.getValue(), mainForm.rightSlider.getValue(), false);
+                }
             }
 
             @Override
@@ -269,7 +263,8 @@ public class Application {
         if (image !=null) {
             mainForm.updateChart(chosenImageFile.getImage().getVisibleArray(),
                     mainForm.leftSlider.getValue(), mainForm.rightSlider.getValue());
-            frame.setIcon(new ImageIcon(image.toBufferedImage(mainForm.leftSlider.getValue(), mainForm.rightSlider.getValue())));
+            frame.setIcon(new ImageIcon(image.toBufferedImage(mainForm.leftSlider.getValue(), mainForm.rightSlider.getValue(),
+                    mainForm.leftSliderBox.getSelectedIndex(), mainForm.rightSliderBox.getSelectedIndex())));
         } else
             frame.setIcon(null);
     }
