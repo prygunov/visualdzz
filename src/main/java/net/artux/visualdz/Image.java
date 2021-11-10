@@ -75,6 +75,22 @@ public class Image {
         return brightnessArray;
     }
 
+    public short[] getVisibleArray(int value, boolean xaxis){
+        short[] targetPixels;
+        if (xaxis) {
+            targetPixels = new short[width];
+            for (int x = 0; x < targetPixels.length; x++) {
+                targetPixels[x] = (short) getVisibleBrightness(x,  value);
+            }
+        } else{
+            targetPixels = new short[height];
+            for (int y = 0; y < targetPixels.length; y++) {
+                targetPixels[y] = (short) getVisibleBrightness(value,  y);
+            }
+        }
+        return targetPixels;
+    }
+
     public short[] getVisibleArray(){
         short[] targetPixels = new short[brightnessArray.length];
         for (int i = 0; i < brightnessArray.length; i++) {
@@ -98,27 +114,23 @@ public class Image {
         return image;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+    public BufferedImage toBufferedImage(int min, int max) {
+        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_BGR);
+        // достаём ссылку на массив пикселей изображения
+        int[] targetPixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
 
-        Image image = (Image) o;
-
-        if (width != image.width) return false;
-        if (height != image.height) return false;
-        if (offset != image.offset) return false;
-        if (beginRow != image.beginRow) return false;
-        return Arrays.equals(brightnessArray, image.brightnessArray);
+        // заполняем с помощью массива яркостей
+        for (int i = 0; i < brightnessArray.length; i++) {
+            int brightness = getVisibleBrightness(i);
+            if (brightness < min)
+                brightness = 0;
+            else if (brightness > max)
+                brightness = 255;
+            // в одном int(4 байта) можно представить 3 байта цвета
+            // реализуется с помощью побитового сдвига
+            targetPixels[i] = (brightness << 16) | (brightness << 8) | (brightness);
+        }
+        return image;
     }
 
-    @Override
-    public int hashCode() {
-        int result = width;
-        result = 31 * result + height;
-        result = 31 * result + offset;
-        result = 31 * result + beginRow;
-        result = 31 * result + Arrays.hashCode(brightnessArray);
-        return result;
-    }
 }

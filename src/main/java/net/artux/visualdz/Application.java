@@ -112,6 +112,31 @@ public class Application {
         }
     };
 
+
+    ChangeListener fixedListener = new ChangeListener() {
+        @Override
+        public void stateChanged(ChangeEvent e) {
+            if (mainForm.lockCheckBox.isSelected()) {
+                int dif = mainForm.rightSlider.getValue() - mainForm.leftSlider.getValue();
+
+                mainForm.leftSlider.setMaximum(255-dif);
+                mainForm.rightSlider.setMinimum(dif);
+            }
+        }
+    };
+
+   /* void setSliderLimits(JSlider slider, int dif){
+        int minLeft = slider.getValue() - dif;
+        if(minLeft < 0)
+            minLeft = 0;
+
+        int maxLeft = slider.getValue() + dif;
+        if (maxLeft > 255)
+            maxLeft = 255;
+        slider.setMinimum(minLeft);
+        slider.setMaximum(maxLeft);
+    }*/
+
     //обработчик изменения сдвига в окне
     ChangeListener minMaxChangeListener = new ChangeListener() {
         @Override
@@ -120,14 +145,20 @@ public class Application {
                 int dif;
                 if(e.getSource().equals(mainForm.leftSlider)){
                     dif = mainForm.leftSlider.getValue() - minS;
-                    if(maxS + dif < 255)
+                    if(maxS + dif <= 255)
                     mainForm.rightSlider.setValue(maxS+dif);
                 }
                 else{
                     dif = mainForm.rightSlider.getValue() - maxS;
-                    if(minS + dif > 0)
+                    if(minS + dif >= 0)
                     mainForm.leftSlider.setValue(minS+dif);
                 }
+
+
+
+            }else{
+                mainForm.leftSlider.setMaximum(maxS);
+                mainForm.rightSlider.setMinimum(minS);
             }
 
             mainForm.leftValue.setText(String.valueOf(mainForm.leftSlider.getValue()));
@@ -136,11 +167,11 @@ public class Application {
             maxS = mainForm.rightSlider.getValue();
             minS = mainForm.leftSlider.getValue();
 
-            mainForm.leftSlider.setMaximum(maxS);
-            mainForm.rightSlider.setMinimum(minS);
 
-            if (chosenImageFile != null) {
-                mainForm.updateChart(chosenImageFile.getImage().getVisibleArray(), minS, maxS);
+
+            if (chosenImageFile != null && chosenImageFile.getImage()!=null) {
+                mainForm.updateChart(chosenImageFile.getImage().getVisibleArray(), mainForm.leftSlider.getValue(), mainForm.rightSlider.getValue());
+                renderImage(mainForm.imageFrame, chosenImageFile.getImage());
             }
         }
     };
@@ -157,6 +188,7 @@ public class Application {
         mainForm.offsetSlider.addChangeListener(offsetChangeListener);
         mainForm.leftSlider.addChangeListener(minMaxChangeListener);
         mainForm.rightSlider.addChangeListener(minMaxChangeListener);
+        mainForm.lockCheckBox.addChangeListener(fixedListener);
 
         // обработчик позиции мыши
         mainForm.imageFrame.addMouseMotionListener(new MouseMotionListener() {
@@ -175,6 +207,12 @@ public class Application {
                 mainForm.factYField.setText(String.valueOf(y));
                 mainForm.brightnessField.setText(String.valueOf(chosenImageFile.getImage().getBrightness(x, y)));
                 mainForm.factBrightnessField.setText(String.valueOf(chosenImageFile.getImage().getVisibleBrightness(x, y)));
+                mainForm.updateLineChart(mainForm.chartPanel1, chosenImageFile.getImage().getVisibleArray(y, true),
+                        mainForm.leftSlider.getValue(), mainForm.rightSlider.getValue(), true);
+
+
+                mainForm.updateLineChart(mainForm.chartPanel2, chosenImageFile.getImage().getVisibleArray(x, false),
+                        mainForm.leftSlider.getValue(), mainForm.rightSlider.getValue(), false);
             }
         });
         mainForm.imageFrame.addMouseListener(new MouseListener() {
@@ -229,8 +267,9 @@ public class Application {
     protected void renderImage(JLabel frame, Image image) {
         //отрисовка изображения
         if (image !=null) {
-            mainForm.updateChart(image.getVisibleArray(), mainForm.leftSlider.getValue(), mainForm.rightSlider.getValue());
-            frame.setIcon(new ImageIcon(image.toBufferedImage()));
+            mainForm.updateChart(chosenImageFile.getImage().getVisibleArray(),
+                    mainForm.leftSlider.getValue(), mainForm.rightSlider.getValue());
+            frame.setIcon(new ImageIcon(image.toBufferedImage(mainForm.leftSlider.getValue(), mainForm.rightSlider.getValue())));
         } else
             frame.setIcon(null);
     }
