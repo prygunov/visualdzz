@@ -125,6 +125,7 @@ public class MainForm extends JFrame {
         plot.getDomainAxis().setCategoryMargin(0);
         plot.getDomainAxis().setUpperMargin(0);
         plot.getDomainAxis().setLowerMargin(0);
+        plot.getDomainAxis().setTickLabelsVisible(false);
 
         if (plot.getRenderer() instanceof LineAndShapeRenderer){
             plot.getRenderer().setSeriesPaint(0, Color.black);
