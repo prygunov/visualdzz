@@ -66,24 +66,21 @@ public class MainForm extends JFrame {
     public void updateChart(short[] arr, int min, int max){
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 
-
         if (Arrays.hashCode(arr)!=lastHashCode){
             lastHashCode = Arrays.hashCode(arr);
             counts = new HashMap<>();
 
+            for (int i = 0; i < 256; i++) {
+                counts.put((short)i, 0);
+            }
+
             for (short value : arr) {
-                if (counts.containsKey(value))
-                    counts.put(value, counts.get(value) + 1);
-                else counts.put(value,  1);
+                counts.put(value, counts.get(value) + 1);
             }
         }
 
-        for(int i = min; i< max;i++)
-        {
-            if (counts.containsKey((short)i))
-                dataset.addValue(counts.get((short)i),"", ""+i);
-            else
-                dataset.addValue(0,"", ""+i);
+        for(int i = min; i<= max;i++) {
+            dataset.addValue(counts.get((short)i),"", ""+i);
         }
 
         JFreeChart chart = createChart(dataset);

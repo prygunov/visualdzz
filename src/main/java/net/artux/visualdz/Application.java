@@ -119,7 +119,7 @@ public class Application {
             mainForm.leftValue.setText(String.valueOf(mainForm.leftSlider.getValue()));
             mainForm.rightValue.setText(String.valueOf(mainForm.rightSlider.getValue()));
 
-            mainForm.leftSlider.setMaximum(mainForm.rightSlider.getValue());
+            mainForm.leftSlider.setMaximum(mainForm.rightSlider.getValue()-1);
             mainForm.rightSlider.setMinimum(mainForm.leftSlider.getValue());
 
             if (chosenImageFile.getImage() != null) {

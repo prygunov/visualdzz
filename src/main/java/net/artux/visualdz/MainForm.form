@@ -292,6 +292,8 @@
             <properties>
               <maximum value="255"/>
               <minimum value="128"/>
+              <paintLabels value="true"/>
+              <paintTicks value="true"/>
               <value value="255"/>
             </properties>
           </component>
