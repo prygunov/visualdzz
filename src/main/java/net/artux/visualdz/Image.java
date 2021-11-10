@@ -117,15 +117,26 @@ public class Image {
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_BGR);
         // достаём ссылку на массив пикселей изображения
         int[] targetPixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
+
+        int left = 0, right = max;
+        if(modeLeft == 0) left = min;
+        if(modeRight == 1) right = 255;
+        if(modeRight == 2) right = 0;
+
         if(modeLeft == 3 && modeRight == 3){
-            short[] normPixels = new short[brightnessArray.length];
+            int normP;
 
             double mult = 255.0 / (max - min);
-            for (int i = 0; i < normPixels.length; i++) {
+            for (int i = 0; i < brightnessArray.length; i++) {
                 int brightness = getVisibleBrightness(i);
-                if(brightness >= min && brightness <= max) {
-                    normPixels[i] = (short) ((brightness - min) * mult);
-                    targetPixels[i] = (normPixels[i] << 16) | (normPixels[i] << 8) | (normPixels[i]);
+                if(brightness > min && brightness < max) {
+                    normP = (short) ((brightness - min) * mult);
+                    targetPixels[i] = (normP << 16) | (normP << 8) | (normP);
+                }
+                else{
+                    //if(brightness <min) brightness = 0;
+                    //else if(brightness > max) brightness = 255;
+                    targetPixels[i] = (brightness << 16) | (brightness << 8) | (brightness);
                 }
             }
         }
@@ -134,9 +145,9 @@ public class Image {
             for (int i = 0; i < brightnessArray.length; i++) {
                 int brightness = getVisibleBrightness(i);
                 if (brightness < min)
-                    brightness = 0;
+                    brightness = left;
                 else if (brightness > max)
-                    brightness = 255;
+                    brightness = right;
                 // в одном int(4 байта) можно представить 3 байта цвета
                 // реализуется с помощью побитового сдвига
                 targetPixels[i] = (brightness << 16) | (brightness << 8) | (brightness);
