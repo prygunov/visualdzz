@@ -48,6 +48,7 @@ public class MainForm extends JFrame {
     public JPanel chartPanel2;
     public JComboBox leftSliderBox;
     public JComboBox rightSliderBox;
+    public JButton blurButton;
 
 
     ActionListener listener = new ActionListener() {
@@ -173,9 +174,5 @@ public class MainForm extends JFrame {
 
 
         return chart;
-    }
-
-    private void createUIComponents() {
-        // TODO: place custom component creation code here
     }
 }

@@ -16,6 +16,7 @@ public class Application {
 
     private final MainForm mainForm; // структура окна
     private final ZoomForm zoomForm;
+    private final BlurForm blurForm;
 
     private final List<ImageFile> imageFiles = new ArrayList<>(); // список выбранных файлов-изображений
     private ImageFile chosenImageFile; // последний выбранный файл-изображения
@@ -167,7 +168,9 @@ public class Application {
 
     Application(){
         mainForm = new MainForm();
-        zoomForm = new ZoomForm(); // создание окна с элементами
+        zoomForm = new ZoomForm();
+        blurForm = new BlurForm();
+        // создание окна с элементами
 
         // назначение обработчиков событий
         mainForm.chooseButton.addActionListener(chooseButtonClickListener);
@@ -196,6 +199,12 @@ public class Application {
                 mainForm.brightnessField.setText(String.valueOf(chosenImageFile.getImage().getBrightness(x, y)));
                 mainForm.factBrightnessField.setText(String.valueOf(chosenImageFile.getImage().getVisibleBrightness(x, y)));
 
+            }
+        });
+        mainForm.blurButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                blurForm.setVisible(true);
             }
         });
         mainForm.imageFrame.addMouseListener(new MouseListener() {
