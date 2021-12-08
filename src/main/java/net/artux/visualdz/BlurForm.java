@@ -64,13 +64,17 @@ public class BlurForm extends JFrame{
     }
 
     List<Tick> generateTicks(){
-
+        //
         int n = (int) spinner1.getValue();
         int b = (int) spinner2.getValue();
+        float max = 1 - (float) Math.abs(b)/n;
         int stepsToMax = 10;
         int maxCount = Math.abs(b);
-        float max = 1;
+
+        //
+
         List<Tick> ticks = new ArrayList<>();
+        //заполнение массива высот
         float[] arr = new float[maxCount + stepsToMax + stepsToMax + 1];
         for (int i = 0; i < stepsToMax; i++) {
             arr[i] = i * max / stepsToMax;
@@ -83,6 +87,7 @@ public class BlurForm extends JFrame{
             arr[i] = max - (j * (max / stepsToMax));
             j++;
         }
+
         for(int i = 0; i< n;i++) {
             Tick tick = new Tick("такт " + i, arr);
             ticks.add(tick);
@@ -149,7 +154,7 @@ public class BlurForm extends JFrame{
         JFreeChart chart = ChartFactory.createXYLineChart(
                     "",
                     "Лучи координатной оси Y",             // x-axis label
-                    "Время экспонирования",                // y-axis label
+                    "Время экспонирования [такты]",                // y-axis label
                     dataset, PlotOrientation.VERTICAL,true, false, false);
         XYPlot plot = chart.getXYPlot();
 
@@ -159,8 +164,6 @@ public class BlurForm extends JFrame{
         plot.setBackgroundPaint(Color.white);
         plot.setRangeGridlinesVisible(false);
         plot.setDomainGridlinesVisible(false);
-        plot.getDomainAxis().setTickLabelsVisible(false);
-
         for (int i = 0; i < dataset.getSeriesCount(); i++) {
             renderer.setSeriesShapesVisible(i, false);
         }
