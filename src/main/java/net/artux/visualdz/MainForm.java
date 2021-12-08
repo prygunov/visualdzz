@@ -12,7 +12,11 @@ import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -45,6 +49,23 @@ public class MainForm extends JFrame {
     public JComboBox leftSliderBox;
     public JComboBox rightSliderBox;
 
+
+    ActionListener listener = new ActionListener() {
+        @Override
+        // Chupapi munyanya sergay edition
+        public void actionPerformed(ActionEvent e) {
+            if (e.getSource() == leftSliderBox) {
+                if (leftSliderBox.getSelectedIndex() == 3)
+                    rightSliderBox.setSelectedIndex(3);
+                else if(rightSliderBox.getSelectedIndex() == 3)
+                    rightSliderBox.setSelectedIndex(0);
+            }else if (rightSliderBox.getSelectedIndex() == 3)
+                leftSliderBox.setSelectedIndex(3);
+            else if(leftSliderBox.getSelectedIndex() == 3)
+                leftSliderBox.setSelectedIndex(0);
+        }
+    };
+
     MainForm() {
         setContentPane(rootPanel);
         setSize(900, 700);
@@ -66,6 +87,7 @@ public class MainForm extends JFrame {
         box.addItem("Установить равным мин/макс");
         box.addItem("Считать равным 0");
         box.addItem("Нормировать");
+        box.addActionListener(listener);
     }
     public void updateChart(short[] arr, int min, int max){
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
