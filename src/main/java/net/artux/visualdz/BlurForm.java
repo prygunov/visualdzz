@@ -20,6 +20,7 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class BlurForm extends JFrame{
@@ -38,57 +39,102 @@ public class BlurForm extends JFrame{
         SpinnerNumberModel model1 = new SpinnerNumberModel();
         model1.setMinimum(1);
         model1.setMaximum(20);
-        model1.setValue(1);
+        model1.setValue(15);
 
         SpinnerNumberModel model2 = new SpinnerNumberModel();
         model2.setMinimum(-5);
         model2.setMaximum(5);
-        model2.setValue(1);
+        model2.setValue(3);
         spinner1.setModel(model1);
         spinner2.setModel(model2);
 
         spinner1.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
-                updateChart(chartPanel);
+                updateChart(chartPanel, generateTicks());
             }
         });
         spinner2.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
-                updateChart(chartPanel);
+                updateChart(chartPanel, generateTicks());
             }
         });
-        updateChart(chartPanel);
+        updateChart(chartPanel, generateTicks());
     }
 
-    public void updateChart(JPanel rootPanel){
-        var dataset = new XYSeriesCollection();
+    List<Tick> generateTicks(){
 
         int n = (int) spinner1.getValue();
         int b = (int) spinner2.getValue();
-        float step = (float) b /n;
-        float firstBigStep = 5;
+        int stepsToMax = 10;
+        int maxCount = Math.abs(b);
+        float max = 1;
+        List<Tick> ticks = new ArrayList<>();
+        float[] arr = new float[maxCount + stepsToMax + stepsToMax + 1];
+        for (int i = 0; i < stepsToMax; i++) {
+            arr[i] = i * max / stepsToMax;
+        }
+        for (int i = stepsToMax; i < stepsToMax + maxCount; i++) {
+            arr[i] = max;
+        }
+        int j = 0;
+        for (int i = stepsToMax + maxCount; i <= stepsToMax + stepsToMax + maxCount; i++) {
+            arr[i] = max - (j * (max / stepsToMax));
+            j++;
+        }
         for(int i = 0; i< n;i++) {
-            var series1 = new XYSeries("такт " + (i+1));
-            series1.add(step * i, 0);
-            series1.add(step*i+firstBigStep, 1);
-            series1.add(step*i+firstBigStep + step, 1);
-            series1.add(step*i+firstBigStep + firstBigStep, 0);
+            Tick tick = new Tick("такт " + i, arr);
+            ticks.add(tick);
+        }
 
+        return ticks;
+    }
+
+    float getY(XYSeries series, int x){
+        for (int i = 0; i < series.getItemCount(); i++) {
+            if (series.getDataItem(i).getX().intValue() == x){
+                return series.getDataItem(i).getY().floatValue();
+            }
+        }
+        return 0;
+    }
+
+    public void updateChart(JPanel rootPanel, List<Tick> ticks){
+        var dataset = new XYSeriesCollection();
+
+        int offset = (int) spinner2.getValue();
+        for(int i = 0; i< ticks.size();i++) {
+            Tick tick = ticks.get(i);
+            var series1 = new XYSeries(tick.getName());
+            var beginFrom = offset * (i+1);
+            for (int j = 0; j < tick.getValues().length; j++){
+                series1.add(beginFrom + j, tick.getValues()[j]);
+            }
             dataset.addSeries(series1);
         }
-        /*var total = new XYSeries("За все такты");
 
-        for (int x = 0; x < ; x+=step/2) {
+        var total = new XYSeries("За все такты");
 
-        }
+        int min = (int)((List<XYSeries>)dataset.getSeries()).get(0).getMinX();
+        int max = (int)((List<XYSeries>)dataset.getSeries()).get(0).getMaxX();
         for(XYSeries series : (List<XYSeries>)dataset.getSeries()){
+            if (min > series.getMinX())
+                min = (int)series.getMinX();
+            if (max < series.getMaxX())
+                max = (int)series.getMaxX();
+        }
 
-        }*/
-
+        for (int x = min; x <= max; x++) {
+            total.add(x, 0);
+            for(XYSeries series : (List<XYSeries>)dataset.getSeries()){
+                float old = getY(total, x);
+                float value = getY(series, x);
+                total.update((double)(x), (double) (old + value));
+            }
+        }
+        dataset.addSeries(total);
         JFreeChart chart;
-
         chart = createChart(dataset);
 
         ChartPanel chartPanel = new ChartPanel(chart);
@@ -102,7 +148,7 @@ public class BlurForm extends JFrame{
 
         JFreeChart chart = ChartFactory.createXYLineChart(
                     "",
-                    "Лучи координатной оси Y",                   // x-axis label
+                    "Лучи координатной оси Y",             // x-axis label
                     "Время экспонирования",                // y-axis label
                     dataset, PlotOrientation.VERTICAL,true, false, false);
         XYPlot plot = chart.getXYPlot();
@@ -113,8 +159,11 @@ public class BlurForm extends JFrame{
         plot.setBackgroundPaint(Color.white);
         plot.setRangeGridlinesVisible(false);
         plot.setDomainGridlinesVisible(false);
+        plot.getDomainAxis().setTickLabelsVisible(false);
 
-
+        for (int i = 0; i < dataset.getSeriesCount(); i++) {
+            renderer.setSeriesShapesVisible(i, false);
+        }
         return chart;
     }
 
