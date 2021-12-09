@@ -9,7 +9,7 @@
     </properties>
     <border type="none"/>
     <children>
-      <grid id="eef7b" layout-manager="GridLayoutManager" row-count="15" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="eef7b" layout-manager="GridLayoutManager" row-count="14" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints border-constraint="West"/>
         <properties>
@@ -210,30 +210,12 @@
           </component>
           <component id="4d65a" class="javax.swing.JButton" binding="blurButton">
             <constraints>
-              <grid row="14" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="13" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <text value="Ядро смаза"/>
             </properties>
           </component>
-          <grid id="af033" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-            <margin top="0" left="0" bottom="0" right="0"/>
-            <constraints>
-              <grid row="13" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties/>
-            <border type="none" title="Обзорное изображение"/>
-            <children>
-              <component id="4f7e0" class="javax.swing.JLabel" binding="miniView">
-                <constraints>
-                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <text value=""/>
-                </properties>
-              </component>
-            </children>
-          </grid>
         </children>
       </grid>
       <grid id="fc87d" layout-manager="BorderLayout" hgap="0" vgap="0">
@@ -274,6 +256,22 @@
               </grid>
             </children>
           </scrollpane>
+          <grid id="af033" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="0" bottom="0" right="0"/>
+            <constraints border-constraint="East"/>
+            <properties/>
+            <border type="none" title="Обзорное изображение"/>
+            <children>
+              <component id="4f7e0" class="javax.swing.JLabel" binding="miniView">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value=""/>
+                </properties>
+              </component>
+            </children>
+          </grid>
         </children>
       </grid>
       <grid id="d471" layout-manager="GridLayoutManager" row-count="7" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">

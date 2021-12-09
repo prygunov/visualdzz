@@ -124,7 +124,7 @@ public class Image {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 int brightness = getVisibleBrightness(6*x,6*y);
-                targetPixels[x + y] = (brightness << 16) | (brightness << 8) | (brightness);
+                targetPixels[x + y* width] = (brightness << 16) | (brightness << 8) | (brightness);
             }
         }
         return image;
