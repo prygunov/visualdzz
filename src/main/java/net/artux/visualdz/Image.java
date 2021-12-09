@@ -113,6 +113,23 @@ public class Image {
         return image;
     }
 
+    public BufferedImage toMiniBufferedImage() {
+        // достаём ссылку на массив пикселей изображения
+        int width = getWidth() / 6;
+        int height = getHeight() / 6;
+
+        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_BGR);
+        int[] targetPixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                int brightness = getVisibleBrightness(6*x,6*y);
+                targetPixels[x + y] = (brightness << 16) | (brightness << 8) | (brightness);
+            }
+        }
+        return image;
+    }
+
     public BufferedImage toBufferedImage(int min, int max, int modeLeft, int modeRight) {
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_BGR);
         // достаём ссылку на массив пикселей изображения

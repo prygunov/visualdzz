@@ -49,11 +49,11 @@ public class MainForm extends JFrame {
     public JComboBox leftSliderBox;
     public JComboBox rightSliderBox;
     public JButton blurButton;
+    public JLabel miniView;
 
 
     ActionListener listener = new ActionListener() {
         @Override
-        // Chupapi munyanya sergay edition
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == leftSliderBox) {
                 if (leftSliderBox.getSelectedIndex() == 3)
