@@ -198,7 +198,6 @@ public class Application {
                 mainForm.factYField.setText(String.valueOf(y));
                 mainForm.brightnessField.setText(String.valueOf(chosenImageFile.getImage().getBrightness(x, y)));
                 mainForm.factBrightnessField.setText(String.valueOf(chosenImageFile.getImage().getVisibleBrightness(x, y)));
-
             }
         });
         mainForm.blurButton.addActionListener(new ActionListener() {
@@ -270,6 +269,7 @@ public class Application {
     protected void renderImage(JLabel frame, Image image) {
         //отрисовка изображения
         if (image !=null) {
+            mainForm.miniView.setIcon(new ImageIcon(image.toMiniBufferedImage()));
             mainForm.updateChart(chosenImageFile.getImage().getVisibleArray(),
                     mainForm.leftSlider.getValue(), mainForm.rightSlider.getValue());
             frame.setIcon(new ImageIcon(image.toBufferedImage(mainForm.leftSlider.getValue(), mainForm.rightSlider.getValue(),
