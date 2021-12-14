@@ -21,6 +21,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class BlurForm extends JFrame{
@@ -39,12 +41,12 @@ public class BlurForm extends JFrame{
         SpinnerNumberModel model1 = new SpinnerNumberModel();
         model1.setMinimum(1);
         model1.setMaximum(20);
-        model1.setValue(15);
+        model1.setValue(8);
 
         SpinnerNumberModel model2 = new SpinnerNumberModel();
         model2.setMinimum(-5);
         model2.setMaximum(5);
-        model2.setValue(3);
+        model2.setValue(4);
         spinner1.setModel(model1);
         spinner2.setModel(model2);
 
@@ -68,7 +70,8 @@ public class BlurForm extends JFrame{
         int n = (int) spinner1.getValue();
         int b = (int) spinner2.getValue();
         float max = 1 - (float) Math.abs(b)/n;
-        int stepsToMax = 10;
+        if (Math.abs(b)>n) max = 0;
+        int stepsToMax = n;
         int maxCount = Math.abs(b);
 
         //
@@ -96,46 +99,70 @@ public class BlurForm extends JFrame{
         return ticks;
     }
 
-    float getY(XYSeries series, int x){
+    float getY(XYSeries series, double x){
         for (int i = 0; i < series.getItemCount(); i++) {
-            if (series.getDataItem(i).getX().intValue() == x){
+            if (almostEqual(series.getDataItem(i).getX().doubleValue(), x, 0.01)){
                 return series.getDataItem(i).getY().floatValue();
             }
         }
         return 0;
     }
 
+    public static boolean almostEqual(double a, double b, double eps){
+        return Math.abs(a-b)<eps;
+    }
+
     public void updateChart(JPanel rootPanel, List<Tick> ticks){
         var dataset = new XYSeriesCollection();
 
-        int offset = (int) spinner2.getValue();
+        int n = (int) spinner1.getValue();
+        int b = (int) spinner2.getValue();
+
+        double offset = (float) b / n;
+        float step = (float) 1/ n;
+
+        double rnx = 1;
+        if (b < 0){
+            rnx = 1 + Math.abs(offset);
+        }
+
         for(int i = 0; i< ticks.size();i++) {
             Tick tick = ticks.get(i);
+
             var series1 = new XYSeries(tick.getName());
-            var beginFrom = offset * (i+1);
+            var beginFrom = offset * i;
             for (int j = 0; j < tick.getValues().length; j++){
-                series1.add(beginFrom + j, tick.getValues()[j]);
+                series1.add(beginFrom + j*step, tick.getValues()[j]);
             }
             dataset.addSeries(series1);
         }
 
         var total = new XYSeries("За все такты");
 
-        int min = (int)((List<XYSeries>)dataset.getSeries()).get(0).getMinX();
-        int max = (int)((List<XYSeries>)dataset.getSeries()).get(0).getMaxX();
+        double min = ((List<XYSeries>)dataset.getSeries()).get(0).getMinX();
+        double max = ((List<XYSeries>)dataset.getSeries()).get(0).getMaxX();
         for(XYSeries series : (List<XYSeries>)dataset.getSeries()){
             if (min > series.getMinX())
-                min = (int)series.getMinX();
+                min = series.getMinX();
             if (max < series.getMaxX())
-                max = (int)series.getMaxX();
+                max = series.getMaxX();
         }
 
-        for (int x = min; x <= max; x++) {
+        for (double x = min; x <= max; x+=step) {
             total.add(x, 0);
+
             for(XYSeries series : (List<XYSeries>)dataset.getSeries()){
                 float old = getY(total, x);
                 float value = getY(series, x);
-                total.update((double)(x), (double) (old + value));
+                total.update(x, (double) (old + value));
+            }
+
+            if (almostEqual(x, rnx, 0.01)){
+                var series1 = new XYSeries("Rn");
+                float old = getY(total, x);
+                series1.add(x, 0);
+                series1.add(x, old);
+                dataset.addSeries(series1);
             }
         }
         dataset.addSeries(total);
