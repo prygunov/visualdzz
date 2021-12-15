@@ -3,23 +3,32 @@ package net.artux.visualdz;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.annotations.XYAnnotation;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.NumberTickUnit;
+import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.block.BlockBorder;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.PlotRenderingInfo;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.chart.renderer.category.StandardBarPainter;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.chart.title.TextTitle;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.ui.HorizontalAlignment;
+import org.jfree.ui.RectangleEdge;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -99,9 +108,43 @@ public class BlurForm extends JFrame{
         return ticks;
     }
 
+    List<Tick> generateNegativeTicks(){
+        //
+        int n = (int) spinner1.getValue();
+        int b = (int) spinner2.getValue();
+        float max = 1 + (float)b/n;
+
+        int maxCount = Math.abs(b);
+        int stepsToMax = n-maxCount;
+
+        //
+
+        List<Tick> ticks = new ArrayList<>();
+        //заполнение массива высот
+        float[] arr = new float[maxCount + stepsToMax + stepsToMax + 1];
+        for (int i = 0; i < stepsToMax; i++) {
+            arr[i] = i * max / stepsToMax;
+        }
+        for (int i = stepsToMax; i < stepsToMax + maxCount; i++) {
+            arr[i] = max;
+        }
+        int j = 0;
+        for (int i = stepsToMax + maxCount; i <= stepsToMax + stepsToMax + maxCount; i++) {
+            arr[i] = max - (j * (max / stepsToMax));
+            j++;
+        }
+
+        for(int i = 0; i< n;i++) {
+            Tick tick = new Tick("такт " + i, arr);
+            ticks.add(tick);
+        }
+
+        return ticks;
+    }
+
     float getY(XYSeries series, double x){
         for (int i = 0; i < series.getItemCount(); i++) {
-            if (almostEqual(series.getDataItem(i).getX().doubleValue(), x, 0.01)){
+            if (almostEqual(series.getDataItem(i).getX().doubleValue(), x, 0.0001)){
                 return series.getDataItem(i).getY().floatValue();
             }
         }
@@ -112,19 +155,21 @@ public class BlurForm extends JFrame{
         return Math.abs(a-b)<eps;
     }
 
-    public void updateChart(JPanel rootPanel, List<Tick> ticks){
+    void drawPositive(JPanel rootPanel, List<Tick> ticks){
         var dataset = new XYSeriesCollection();
 
         int n = (int) spinner1.getValue();
         int b = (int) spinner2.getValue();
 
-        double offset = (float) b / n;
-        float step = (float) 1/ n;
+        double offset = Math.abs((float) b / n);
+        float step = (float) 1 / n;
 
         double rnx = 1;
-        if (b < 0){
-            rnx = 1 + Math.abs(offset);
+        if (b<0) {
+            Collections.reverse(ticks);
+            rnx = 1 + Math.abs(offset)*n;
         }
+
 
         for(int i = 0; i< ticks.size();i++) {
             Tick tick = ticks.get(i);
@@ -173,6 +218,81 @@ public class BlurForm extends JFrame{
         rootPanel.removeAll();
         rootPanel.add(chartPanel);
         rootPanel.revalidate();
+    }
+
+    void drawNegative(JPanel rootPanel, List<Tick> ticks){
+        var dataset = new XYSeriesCollection();
+
+        ticks = generateNegativeTicks();
+        int n = (int) spinner1.getValue();
+        int b = (int) spinner2.getValue();
+
+        double offset = Math.abs((float) b / n);
+        float step = (float) 1 / n;
+
+        Collections.reverse(ticks);
+
+        for(int i = 0; i< ticks.size();i++) {
+            Tick tick = ticks.get(i);
+
+            var series1 = new XYSeries(tick.getName());
+            var beginFrom = offset * i;
+            for (int j = 0; j < tick.getValues().length; j++){
+                series1.add(beginFrom + j*step, tick.getValues()[j]);
+            }
+            dataset.addSeries(series1);
+        }
+
+        var total = new XYSeries("За все такты");
+
+        double min = ((List<XYSeries>)dataset.getSeries()).get(0).getMinX();
+        double max = ((List<XYSeries>)dataset.getSeries()).get(0).getMaxX();
+        for(XYSeries series : (List<XYSeries>)dataset.getSeries()){
+            if (min > series.getMinX())
+                min = series.getMinX();
+            if (max < series.getMaxX())
+                max = series.getMaxX();
+        }
+
+        double rnx = 1;
+        if (b < 0){
+            rnx = 1 + Math.abs(offset)*(n-1);
+        }
+
+        for (double x = min; x <= max; x+=step) {
+            total.add(x, 0);
+
+            for(XYSeries series : (List<XYSeries>)dataset.getSeries()){
+                float old = getY(total, x);
+                float value = getY(series, x);
+                total.update(x, (double) (old + value));
+            }
+
+            if (almostEqual(x, rnx, 0.01)){
+                var series1 = new XYSeries("Rn");
+                float old = getY(total, x);
+                series1.add(x, 0);
+                series1.add(x, old);
+                dataset.addSeries(series1);
+            }
+        }
+        dataset.addSeries(total);
+        JFreeChart chart;
+        chart = createChart(dataset);
+
+        ChartPanel chartPanel = new ChartPanel(chart);
+        rootPanel.removeAll();
+        rootPanel.add(chartPanel);
+        rootPanel.revalidate();
+    }
+
+    public void updateChart(JPanel rootPanel, List<Tick> ticks){
+        int n = (int) spinner1.getValue();
+        int b = (int) spinner2.getValue();
+        if (b>=0)
+            drawPositive(rootPanel, ticks);
+        else
+            drawPositive(rootPanel, ticks);
     }
 
     private JFreeChart createChart(XYSeriesCollection dataset)
